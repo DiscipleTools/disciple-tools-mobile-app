@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
@@ -12,23 +12,30 @@ import {
   AccountIcon,
   AccountsIcon,
   BellIcon,
-  MoreIcon
+  MoreIcon,
+  UserIcon,
 } from "components/Icon";
-import HomeScreen from "screens/HomeScreen";
-import MoreScreen from "screens/MoreScreen";
+
 import PINScreen from "screens/PINScreen";
+import HomeScreen from "screens/HomeScreen";
+import AllActivityLogsScreen from "screens/AllActivityLogsScreen";
+import ListScreen from "screens/Posts/ListScreen";
 import CreateScreen from "screens/Posts/CreateScreen";
 import ImportContactsScreen from "screens/Posts/ImportContactsScreen";
-import ListScreen from "screens/Posts/ListScreen";
 import DetailsScreen from "screens/Posts/DetailsScreen";
 //import AttendanceScreen from 'screens/AttendanceScreen';
 //import QuestionnaireScreen from 'screens/Posts/QuestionnaireScreen';
 import CommentsActivityScreen from "screens/Posts/CommentsActivityScreen";
+import MyUserScreen from "screens/MyUserScreen";
+import StorageScreen from "screens/StorageScreen";
 import NotificationsScreen from "screens/NotificationsScreen";
-import SettingsScreen from "screens/SettingsScreen";
+import MoreScreen from "screens/MoreScreen";
 
 import useI18N from "hooks/use-i18n";
+//import useMyUser from "hooks/use-my-user";
+//import useNetwork from "hooks/use-network";
 import useNotifications from "hooks/use-notifications";
+import usePushNotifications from "hooks/use-push-notifications";
 import useTheme from "hooks/use-theme";
 
 import {
@@ -41,14 +48,32 @@ import {
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const TabNavigator = () => {
-  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-  console.log("$$$$$          MAIN TAB NAVIGATOR             $$$$$");
-  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+const TabNavigator = ({ navigation }) => {
+  // subscribe to push notifications
+  /*
+   * NOTE: we include here rather than `use-app` in order to be under the Redux
+   * Provider Context (this hook depends on other hooks which depend on Redux)
+   */
+  usePushNotifications();
 
   const { isDarkMode, theme } = useTheme();
-  const { i18n, isRTL, locale } = useI18N();
+  const { i18n, setLocale } = useI18N();
   const { hasNotifications } = useNotifications();
+  //const { data: userData } = useMyUser();
+  //const { isConnected } = useNetwork();
+
+  /*
+  // TODO: is this still necessary?
+  useEffect(() => {
+    if (!userData?.locale) return;
+    if (isConnected) {
+      if (userData.locale !== i18n?.locale) {
+        setLocale(userData.locale);
+      }
+    }
+    return;
+  }, [userData?.locale]);
+  */
 
   const screenOptions = {
     headerStyle: {
@@ -69,6 +94,9 @@ const TabNavigator = () => {
           name={ScreenConstants.LIST}
           component={ListScreen}
           //options={{ headerShown: false }}
+          options={{
+            title: "",
+          }}
           initialParams={
             route?.params
               ? {
@@ -92,9 +120,9 @@ const TabNavigator = () => {
         <Stack.Screen
           name={ScreenConstants.CREATE}
           component={CreateScreen}
-          options={{
-            ...TransitionPresets.ModalTransition,
-          }}
+          //options={{
+          //  ...TransitionPresets.ModalTransition,
+          //}}
           initialParams={
             route?.params
               ? {
@@ -108,7 +136,7 @@ const TabNavigator = () => {
           component={ImportContactsScreen}
           options={{
             // TODO:better title term
-            title: i18n.t("global.importContact", { locale }),
+            title: i18n.t("global.importContact"),
           }}
           initialParams={{
             type: TypeConstants.CONTACT,
@@ -117,10 +145,10 @@ const TabNavigator = () => {
         <Stack.Screen
           name={ScreenConstants.COMMENTS_ACTIVITY}
           component={CommentsActivityScreen}
-          options={{
-            title: i18n.t("global.commentsActivity", { locale }),
-            ...TransitionPresets.ModalTransition,
-          }}
+          //options={{
+          //  title: i18n.t("global.commentsActivity"),
+          //  ...TransitionPresets.ModalTransition,
+          //}}
           initialParams={
             route?.params
               ? {
@@ -136,9 +164,10 @@ const TabNavigator = () => {
   const HomeStack = () => {
     return (
       <Stack.Navigator screenOptions={screenOptions}>
+        <Stack.Screen name={TabScreenConstants.HOME} component={HomeScreen} />
         <Stack.Screen
-          name={TabScreenConstants.HOME}
-          component={HomeScreen}
+          name={ScreenConstants.ALL_ACTIVITY_LOGS}
+          component={AllActivityLogsScreen}
         />
         <Stack.Screen
           name={TabScreenConstants.CONTACTS}
@@ -154,43 +183,73 @@ const TabNavigator = () => {
             type: TypeConstants.GROUP,
           }}
         />
+      </Stack.Navigator>
+    );
+  };
+
+  const MyUserStack = ({ route }) => {
+    return (
+      <Stack.Navigator screenOptions={screenOptions}>
         <Stack.Screen
-          name={ScreenConstants.NOTIFICATIONS}
-          component={NotificationsScreen}
-          //options={{ presentation: 'transparentModal' }}
-          options={{
-            title: i18n.t("global.notifications", { locale }),
-          }}
-          initialParams={{
-            type: TypeConstants.NOTIFICATION,
-          }}
-        />
-        <Stack.Screen
-          name={ScreenConstants.SETTINGS}
-          component={SettingsScreen}
+          name={ScreenConstants.MY_USER}
+          component={MyUserScreen}
           //options={{
           //mode: "modal",
-          //headerMode: "none",
           //cardStyle: {
           //  backgroundColor:"transparent",
           //  opacity: 0.99
           //}
           //}}
           options={{
-            title: i18n.t("global.settings", { locale }),
+            title: "",
           }}
           initialParams={{
-            type: TypeConstants.SETTINGS,
+            type: TypeConstants.MY_USER,
           }}
+        />
+        <Stack.Screen
+          name={ScreenConstants.COMMENTS_ACTIVITY}
+          component={CommentsActivityScreen}
+          //options={{
+          //  title: i18n.t("global.commentsActivity"),
+          //  ...TransitionPresets.ModalTransition,
+          //}}
+          initialParams={
+            route?.params
+              ? {
+                  ...route.params,
+                }
+              : null
+          }
+        />
+        <Stack.Screen
+          name={ScreenConstants.DETAILS}
+          component={DetailsScreen}
+          //options={{ presentation: 'card' }}
+          initialParams={
+            route?.params
+              ? {
+                  ...route.params,
+                }
+              : null
+          }
         />
         <Stack.Screen
           name={ScreenConstants.PIN}
           options={{
             title: null,
-            headerBackTitle: i18n.t("global.settings", { locale }),
+            //headerBackTitle: i18n.t("global.settings"),
           }}
         >
           {(props) => <PINScreen {...props} />}
+        </Stack.Screen>
+        <Stack.Screen
+          name={ScreenConstants.STORAGE}
+          options={{
+            title: i18n.t("global.storage"),
+          }}
+        >
+          {(props) => <StorageScreen {...props} />}
         </Stack.Screen>
       </Stack.Navigator>
     );
@@ -203,7 +262,7 @@ const TabNavigator = () => {
           name={TabScreenConstants.NOTIFICATIONS}
           component={NotificationsScreen}
           options={{
-            title: i18n.t("global.notifications", { locale }),
+            title: i18n.t("global.notifications"),
           }}
           initialParams={{
             type: TypeConstants.NOTIFICATION,
@@ -220,12 +279,15 @@ const TabNavigator = () => {
           name={TabScreenConstants.MORE}
           component={MoreScreen}
           options={{
-            title: i18n.t("global.more", { locale }),
+            title: i18n.t("global.more"),
           }}
         />
         <Stack.Screen
           name={ScreenConstants.LIST}
           component={ListScreen}
+          options={{
+            title: "",
+          }}
           initialParams={
             route?.params
               ? {
@@ -248,9 +310,24 @@ const TabNavigator = () => {
         <Stack.Screen
           name={ScreenConstants.CREATE}
           component={CreateScreen}
-          options={{
-            ...TransitionPresets.ModalTransition,
-          }}
+          //options={{
+          //  ...TransitionPresets.ModalTransition,
+          //}}
+          initialParams={
+            route?.params
+              ? {
+                  ...route.params,
+                }
+              : null
+          }
+        />
+        <Stack.Screen
+          name={ScreenConstants.COMMENTS_ACTIVITY}
+          component={CommentsActivityScreen}
+          //options={{
+          //  title: i18n.t("global.commentsActivity"),
+          //  ...TransitionPresets.ModalTransition,
+          //}}
           initialParams={
             route?.params
               ? {
@@ -264,15 +341,14 @@ const TabNavigator = () => {
   };
 
   const indicatorStyle = (focused) => {
-    if (focused) return {
-      top: -10,
-      height: 3,
-      backgroundColor: isDarkMode
-          ? theme.highlight
-          : theme.brand.primary,
-    };
+    if (focused)
+      return {
+        top: -10,
+        height: 3,
+        backgroundColor: isDarkMode ? theme.highlight : theme.brand.primary,
+      };
     return null;
-  }
+  };
 
   return (
     <Tab.Navigator
@@ -289,7 +365,6 @@ const TabNavigator = () => {
           borderTopColor: theme.divider,
           display: [
             ScreenConstants.PIN,
-            ScreenConstants.SETTINGS,
             ScreenConstants.COMMENTS_ACTIVITY,
           ].includes(getFocusedRouteNameFromRoute(route))
             ? "none"
@@ -307,7 +382,7 @@ const TabNavigator = () => {
         component={HomeStack}
         options={{
           tabBarShowLabel: false,
-          //tabBarLabel: i18n.t("global.home", { locale }),
+          //tabBarLabel: i18n.t("global.home"),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <View style={indicatorStyle(focused)} />
@@ -338,7 +413,7 @@ const TabNavigator = () => {
         options={{
           //unmountOnBlur: true,
           tabBarShowLabel: false,
-          //tabBarLabel: i18n.t("global.contacts", { locale }),
+          //tabBarLabel: i18n.t("global.contacts"),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <View style={indicatorStyle(focused)} />
@@ -372,7 +447,7 @@ const TabNavigator = () => {
         }}
         options={{
           tabBarShowLabel: false,
-          //tabBarLabel: i18n.t("global.groups", { locale }),
+          //tabBarLabel: i18n.t("global.groups"),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <View style={indicatorStyle(focused)} />
@@ -399,11 +474,45 @@ const TabNavigator = () => {
         })}
       />
       <Tab.Screen
+        name={TabScreenConstants.MY_USER}
+        component={MyUserStack}
+        initialParams={{
+          type: TypeConstants.MY_USER,
+        }}
+        options={{
+          //unmountOnBlur: true,
+          tabBarShowLabel: false,
+          tabBarIcon: ({ focused, color }) => (
+            <View>
+              <View style={indicatorStyle(focused)} />
+              <UserIcon style={{ color }} />
+            </View>
+          ),
+        }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: TabScreenConstants.MY_USER,
+                  params: {
+                    screen: ScreenConstants.MY_USER,
+                    type: TypeConstants.MY_USER,
+                  },
+                },
+              ],
+            });
+          },
+        })}
+      />
+      <Tab.Screen
         name={TabScreenConstants.NOTIFICATIONS}
         component={NotificationsStack}
         options={{
           tabBarShowLabel: false,
-          //tabBarLabel: i18n.t("global.notifications", { locale }),
+          //tabBarLabel: i18n.t("global.notifications"),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <View style={indicatorStyle(focused)} />
@@ -438,7 +547,7 @@ const TabNavigator = () => {
         component={MoreStack}
         options={{
           tabBarShowLabel: false,
-          //tabBarLabel: i18n.t("global.more", { locale }),
+          //tabBarLabel: i18n.t("global.more"),
           tabBarIcon: ({ focused, color }) => (
             <View>
               <View style={indicatorStyle(focused)} />
@@ -463,4 +572,11 @@ const TabNavigator = () => {
     </Tab.Navigator>
   );
 };
-export default TabNavigator;
+const areEqual = (prevProps, nextProps) => {
+  return (
+    prevProps.i18n?.locale === nextProps.i18n?.locale &&
+    prevProps.theme?.mode === nextProps.theme?.mode &&
+    prevProps.theme?.brand?.primary === nextProps.theme?.brand?.primary
+  );
+};
+export default React.memo(TabNavigator, areEqual);

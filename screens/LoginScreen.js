@@ -1,265 +1,185 @@
-import React, { useState, useEffect, useRef, forwardRef } from "react";
-import {
-  Image,
-  Keyboard,
-  Linking,
-  Text,
-  View,
-} from "react-native";
-import { UserIcon, EyeIcon, KeyIcon, LinkIcon } from "components/Icon";
+import React, { useEffect, useState } from "react";
+import { Image, Keyboard, Linking, ScrollView, View } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector, useDispatch } from "react-redux";
+
+import { UsernameIcon, EyeIcon, KeyIcon, LinkIcon } from "components/Icon";
 import Button from "components/Button";
 import Link from "components/Link";
 import PluginRequired from "components/PluginRequired";
-import LabeledTextInput from "components/LabeledTextInput";
+import { LabeledTextInput } from "components/LabeledTextInput";
 import LanguagePicker from "components/Picker/LanguagePicker";
 import AppVersion from "components/AppVersion";
 
 import { useAuth } from "hooks/use-auth";
-import useDevice from "hooks/use-device";
 import useI18N from "hooks/use-i18n";
 import usePlugins from "hooks/use-plugins";
 import useStyles from "hooks/use-styles";
 import useToast from "hooks/use-toast";
 
+import { setFormField } from "store/actions/auth.actions";
+
 import { localStyles } from "./LoginScreen.styles";
+
+const Header = React.memo(() => {
+  const { styles } = useStyles(localStyles);
+  return (
+    <View style={styles.header}>
+      <Image
+        source={require("assets/dt-icon.png")}
+        style={styles.welcomeImage}
+      />
+    </View>
+  );
+});
 
 const LoginScreen = () => {
   const { styles, globalStyles } = useStyles(localStyles);
-  const { user, rememberLoginDetails, signIn } = useAuth();
-  const { isIOS } = useDevice();
-  const { i18n, isRTL, locale } = useI18N();
+  const { user, rememberLoginDetails, signIn, modifyUser } = useAuth();
+  const { i18n } = useI18N();
   const { mobileAppPlugin } = usePlugins();
   const toast = useToast();
 
-  const [state, setState] = useState({
-    domainValidation: null,
-    userValidation: null,
-    passwordValidation: null,
-  });
+  const dispatch = useDispatch();
+
+  const domainInput = useSelector((state) => state?.authReducer?.domain);
+  const usernameInput = useSelector((state) => state?.authReducer?.username);
+  const passwordInput = useSelector((state) => state?.authReducer?.password);
 
   const [loading, setLoading] = useState(false);
 
-  const domainRef = useRef(null);
-  const usernameRef = useRef(null);
-  const passwordRef = useRef(null);
+  const [state, setState] = useState({
+    domainValidation: false,
+    userValidation: false,
+    passwordValidation: false,
+  });
 
-  //const usernameFieldRef = useRef();
-  //const passwordFieldRef = useRef();
+  const [showPassword, toggleShowPassword] = useState(false);
 
-  const cleanDomain = (domain) => {
-    // trim leading/trailing whitespace and remove protocol
-    return domain?.trim()?.replace("http://", "")?.replace("https://", "");
-  };
+  useEffect(() => {
+    if (rememberLoginDetails && user) {
+      dispatch(setFormField({ key: "domain", value: user?.domain }));
+      dispatch(setFormField({ key: "username", value: user?.username }));
+    }
+  }, []);
 
   // TODO: add validation
   const onLoginPress = async () => {
     Keyboard.dismiss();
     setLoading(true);
-    const domain = domainRef.current;
-    const username = usernameRef.current;
-    const password = passwordRef.current;
-    if (domain && username && password) {
-      const cleanedDomain = cleanDomain(domain);
+
+    if (
+      domainInput.length > 0 &&
+      usernameInput.length > 0 &&
+      passwordInput.length > 0
+    ) {
+      const cleanedDomain = domainInput
+        ?.trim()
+        ?.replace("http://", "")
+        ?.replace("https://", "");
       try {
-        await signIn(cleanedDomain, username, password);
+        await signIn(cleanedDomain, usernameInput, passwordInput);
       } catch (error) {
         toast(error.message, true);
       } finally {
         setLoading(false);
       }
     } else {
-      // if any of the required fields are not set, then update state to show error
       setState({
         ...state,
-        domainValidation: !domain,
-        userValidation: !username,
-        passwordValidation: !password,
+        domainValidation: domainInput.length === 0,
+        userValidation: usernameInput.length === 0,
+        passwordValidation: passwordInput.length === 0,
       });
+      setLoading(false);
     }
   };
-
-  const Header = () => {
-    return (
-      <View style={styles.header}>
-        <Image
-          source={require("assets/dt-icon.png")}
-          style={styles.welcomeImage}
-        />
-      </View>
-    );
-  };
-
-  const DomainField = forwardRef((props, ref) => {
-    useEffect(() => {
-      if (rememberLoginDetails && user?.domain) {
-        ref.current = user.domain;
-        setDomain(user.domain);
-      }
-    }, []);
-    const [domain, setDomain] = useState(ref?.current);
-    const domainErrorMessage = state.domainValidation ? (
-      <Text style={styles.validationErrorMessage}>
-        {i18n.t("loginScreen.domain.error", { locale })}
-      </Text>
-    ) : null;
-    return (
-      <>
-        <LabeledTextInput
-          editing
-          onChangeText={(text) => {
-            ref.current = text;
-            setDomain(text);
-          }}
-          value={domain}
-          accessibilityLabel={i18n.t("loginScreen.domain.label", { locale })}
-          label={i18n.t("loginScreen.domain.label", { locale })}
-          containerStyle={[
-            styles.textField,
-            state.domainValidation && styles.domainErrorInput,
-          ]}
-          startIcon={<LinkIcon />}
-          // TODO: is this necessary (using rowContainer in component?)
-          textAlign={isRTL ? "right" : "left"}
-          autoCapitalize="none"
-          autoCorrect={false}
-          //returnKeyType="next"
-          //onSubmitEditing={() => usernameFieldRef.current.focus()}
-          //blurOnSubmit={false}
-          textContentType="URL"
-          keyboardType="url"
-          disabled={loading}
-        />
-        {domainErrorMessage}
-      </>
-    );
-  });
-
-  const UsernameField = forwardRef((props, ref) => {
-    useEffect(() => {
-      if (rememberLoginDetails && user?.username) {
-        ref.current = user.username;
-        setUsername(user.username);
-      }
-    }, []);
-    const [username, setUsername] = useState(ref?.current);
-    const userErrorMessage = state.userValidation ? (
-      <Text style={styles.validationErrorMessage}>
-        {i18n.t("loginScreen.username.error", { locale })}
-      </Text>
-    ) : null;
-    return (
-      <>
-        <LabeledTextInput
-          editing
-          value={username}
-          onChangeText={(text) => {
-            setUsername(text);
-            ref.current = text;
-          }}
-          accessibilityLabel={i18n.t("loginScreen.username.label", { locale })}
-          label={i18n.t("loginScreen.username.label", { locale })}
-          containerStyle={[
-            styles.textField,
-            state.usernameValidation && styles.validationErrorInput,
-          ]}
-          //iconName={isIOS ? "ios-person" : "md-person"}
-          startIcon={<UserIcon />}
-          textAlign={isRTL ? "right" : "left"}
-          autoCapitalize="none"
-          autoCorrect={false}
-          //ref={usernameFieldRef}
-          //returnKeyType="next"
-          //onSubmitEditing={() => passwordFieldRef.current.focus()}
-          //blurOnSubmit={false}
-          textContentType="emailAddress"
-          keyboardType="email-address"
-          disabled={loading}
-        />
-        {userErrorMessage}
-      </>
-    );
-  });
-
-  const PasswordField = forwardRef((props, ref) => {
-    const [password, setPassword] = useState(ref?.current);
-    const [showPassword, setShowPassword] = useState(false);
-    const passwordErrorMessage = state.passwordValidation ? (
-      <Text style={styles.validationErrorMessage}>
-        {i18n.t("loginScreen.password.error", { locale })}
-      </Text>
-    ) : null;
-    return (
-      <View>
-        <LabeledTextInput
-          editing
-          value={password}
-          onChangeText={(text) => {
-            ref.current = text;
-            setPassword(text);
-          }}
-          ref={ref}
-          accessibilityLabel={i18n.t("loginScreen.password.label", { locale })}
-          label={i18n.t("loginScreen.password.label", { locale })}
-          //style={styles.inputText}
-          containerStyle={[
-            styles.textField,
-            state.passwordValidation && styles.validationErrorInput,
-          ]}
-          //iconName={isIOS ? "ios-key" : "md-key"}
-          startIcon={<KeyIcon />}
-          endIcon={
-            <EyeIcon
-              onPress={() => setShowPassword(!showPassword)}
-              style={styles.showPasswordIcon(showPassword)}
-            />
-          }
-          underlineColorAndroid="transparent"
-          secureTextEntry={!showPassword}
-          textAlign={isRTL ? "right" : "left"}
-        />
-        {passwordErrorMessage}
-      </View>
-    );
-  });
 
   const ForgotPasswordLink = () => (
     <Link
       disabled={loading}
-      title={i18n.t("global.forgotPassword", { locale })}
+      title={i18n.t("global.forgotPassword")}
       onPress={() => {
-        const domain = domainRef?.current;
-        if (domain?.length > 0) {
-          Linking.openURL(`https://${domain}/wp-login.php?action=lostpassword`);
+        if (domainInput?.length > 0) {
+          Linking.openURL(
+            `https://${domainInput}/wp-login.php?action=lostpassword`
+          );
         } else {
-          toast(i18n.t("loginScreen.domain.errorForgotPass", { locale }), true);
+          toast(i18n.t("loginScreen.domain.errorForgotPass"), true);
         }
       }}
       containerStyle={styles.forgotPasswordLink}
     />
   );
 
-  const LoginButton = () => (
-    <Button
-      title={i18n.t("global.login", { locale })}
-      loading={loading}
-      onPress={onLoginPress}
-    />
-  );
-
   return (
-    <View style={globalStyles.screenContainer}>
-      <Header />
-      <View style={styles.formContainer}>
-        <PluginRequired {...mobileAppPlugin} />
-        <DomainField ref={domainRef} />
-        <UsernameField ref={usernameRef} />
-        <PasswordField ref={passwordRef} />
-        <LoginButton />
-        <ForgotPasswordLink />
-        <LanguagePicker />
-        <AppVersion />
-      </View>
-    </View>
+    <SafeAreaView style={globalStyles.screenContainer}>
+      <ScrollView>
+        <Header />
+        <View style={styles.formContainer}>
+          <PluginRequired {...mobileAppPlugin} />
+          <LabeledTextInput
+            editing
+            value={domainInput}
+            i18nKey="global.url"
+            onChangeText={(text) => {
+              dispatch(setFormField({ key: "domain", value: text }));
+              if (rememberLoginDetails) {
+                modifyUser({ key: "domain", value: text });
+              }
+            }}
+            startIcon={<LinkIcon />}
+            textContentType="URL"
+            keyboardType="url"
+            disabled={loading}
+            error={state.domainValidation}
+          />
+          <LabeledTextInput
+            editing
+            value={usernameInput}
+            i18nKey="global.username"
+            onChangeText={(text) => {
+              dispatch(setFormField({ key: "username", value: text }));
+              if (rememberLoginDetails) {
+                modifyUser({ key: "username", value: text });
+              }
+            }}
+            startIcon={<UsernameIcon />}
+            textContentType="emailAddress"
+            keyboardType="email-address"
+            disabled={loading}
+            error={state.userValidation}
+          />
+          <LabeledTextInput
+            editing
+            value={passwordInput}
+            i18nKey="global.password"
+            onChangeText={(text) => {
+              dispatch(setFormField({ key: "password", value: text }));
+            }}
+            disabled={loading}
+            startIcon={<KeyIcon />}
+            endIcon={
+              <EyeIcon
+                onPress={() => toggleShowPassword(!showPassword)}
+                style={styles.showPasswordIcon(showPassword)}
+              />
+            }
+            secureTextEntry={!showPassword}
+            error={state.passwordValidation}
+          />
+          <Button
+            title={i18n.t("global.login")}
+            loading={loading}
+            onPress={onLoginPress}
+          />
+          <ForgotPasswordLink />
+          <LanguagePicker />
+          <AppVersion />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
+
 export default LoginScreen;

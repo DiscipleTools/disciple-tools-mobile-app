@@ -3,9 +3,9 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     backgroundColor: theme.surface.primary,
   },
   skeletonBackground: {
-    backgroundColor: theme.divider
+    backgroundColor: theme.divider,
   },
   skeletonForeground: {
-    backgroundColor: theme.background.primary
+    backgroundColor: theme.background.primary,
   },
 });

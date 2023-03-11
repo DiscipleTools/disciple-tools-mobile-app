@@ -3,18 +3,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     paddingVertical: 20,
   },
   cardRowContainer: {
-    justifyContent: "space-evenly"
-  },
-  logo: {
-    height: 25,
-    width: 40,
-    resizeMode: "contain",
-  },
-  brandText: {
-    color: theme.text.primary,
-    fontSize: 20,
-    fontWeight: "bold",
-    marginEnd: 5,
+    justifyContent: "space-evenly",
   },
   // TODO: move to globalStyles?
   headerIcon: {

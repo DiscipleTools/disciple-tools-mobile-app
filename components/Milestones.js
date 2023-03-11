@@ -17,7 +17,6 @@ const Milestones = ({
   postType,
   editing,
 }) => {
-
   const { styles, globalStyles } = useStyles(localStyles);
   // TODO:
   const { i18n, isRTL } = useI18N();

@@ -1,82 +1,106 @@
-//import './wdyr';
+import "./wdyr";
 import React, { useEffect } from "react";
-import { LogBox, Text } from "react-native";
+import { LogBox, Platform, Text } from "react-native";
+
+import * as SplashScreen from "expo-splash-screen";
+
 import AppNavigator from "navigation/AppNavigator";
 
 import { store, persistor } from "store/store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-
-import * as SplashScreen from "expo-splash-screen";
+import { SWRConfig } from "swr";
 
 import Toast from "react-native-toast-message";
 
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+
 import { AuthProvider } from "hooks/use-auth";
-import usePushNotifications from "hooks/use-push-notifications";
+//import useApp from "hooks/use-app";
+import useAppState from "hooks/use-app-state";
 import useStyles from "hooks/use-styles";
+import { toastConfig } from "hooks/use-toast";
 
-import { AppConstants } from "constants";
+//import { AppConstants } from "constants";
 
-import { SWRConfig } from "swr";
+import { enableScreens } from "react-native-screens";
+enableScreens();
+
+const StyledApp = () => {
+  // set default text styles
+  const { globalStyles } = useStyles();
+  Text.defaultProps = Text.defaultProps || {};
+  Text.defaultProps.style = { ...globalStyles.text };
+  return <AppNavigator />;
+};
 
 const App = () => {
+  // Initialize the app
+  //useApp();
 
-
+  // https://github.com/react-navigation/react-navigation/issues/10432#issuecomment-1081942421
   useEffect(() => {
-    LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
-  }, [])
-
-  // Ignore YellowBox warnings in DEV 
-  LogBox.ignoreAllLogs();
-
-  // Register Push Notification Listeners
-  usePushNotifications();
-
-  // Keep the splash screen visible until we are ready to render the app
-  // navigation/AppNavigator.js
-  useEffect(() => {
-    (async () => {
-      try {
-        await SplashScreen.preventAutoHideAsync();
-      } catch (e) {
-        console.warn(e);
-      }
-    })();
+    if (Platform.OS === "ios") {
+      enableScreens(false);
+    }
   }, []);
 
-  // NOTE: Necessary bc our chain of hooks depends on Redux and we need to be inside the Redux Provider
-  const StyledApp = () => {
-    // set default text styles
-    const { globalStyles } = useStyles();
-    Text.defaultProps = Text.defaultProps || {};
-    Text.defaultProps.style = { ...globalStyles.text };
-    return <AppNavigator />;
-  };
+  // Dispay splash screen (keep visible until iniital screens ready to render)
+  useEffect(() => {
+    try {
+      (async () => {
+        await SplashScreen.preventAutoHideAsync();
+      })();
+    } catch (e) {
+      console.warn(e);
+    }
+    return;
+  }, []);
+
+  // Persist SWR in-memory cache to device storage on an interval
+  /*
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log(`Persist cache (runs every ${CacheConstants.INTERVAL} ms) -`, new Date());
+      (async () => {
+        await persistCache();
+      })();
+    }, CacheConstants.INTERVAL);
+    return () => clearInterval(interval);
+  }, []);
+  */
+
+  // Handle App State change(s)
+  useAppState();
+
+  LogBox.ignoreAllLogs();
 
   return (
     <>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <SWRConfig
-            value={{
-              revalidateOnFocus: true,
-              refreshInterval: AppConstants.REFRESH_INTERVAL,
-              shouldRetryOnError: false,
-              dedupingInterval: 2000,
-              focusThrottleInterval: 5000,
-              loadingTimeout: 10000,
-            }}
-          >
-            <BottomSheetModalProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <SWRConfig
+              value={{
+                revalidateOnFocus: true,
+                refreshInterval: 0, //5000, //AppConstants.REFRESH_INTERVAL,
+                shouldRetryOnError: false,
+                dedupingInterval: 2000,
+                focusThrottleInterval: 5000,
+                loadingTimeout: 10000,
+              }}
+            >
               <AuthProvider>
-                <StyledApp />
+                <BottomSheetModalProvider>
+                  <StyledApp />
+                </BottomSheetModalProvider>
               </AuthProvider>
-            </BottomSheetModalProvider>
-          </SWRConfig>
+            </SWRConfig>
+          </GestureHandlerRootView>
         </PersistGate>
       </Provider>
-      <Toast/>
+      <Toast config={toastConfig} />
     </>
   );
 };

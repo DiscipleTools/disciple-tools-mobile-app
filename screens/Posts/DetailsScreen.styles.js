@@ -16,13 +16,16 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   },
   tabBarTab: {
     minWidth: 75,
-    width: "auto"
+    width: "auto",
   },
   tabBarIndicator: {
-    backgroundColor: ThemeConstants.DARK === theme.mode ? theme.highlight : theme.brand.primary,
-    height: 3
+    backgroundColor:
+      ThemeConstants.DARK === theme.mode
+        ? theme.highlight
+        : theme.brand.primary,
+    height: 3,
   },
   headerIcon: {
-    marginHorizontal: 10
-  }
+    marginHorizontal: 10,
+  },
 });

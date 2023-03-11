@@ -3,7 +3,8 @@ import { Image, Pressable, Text, View } from "react-native";
 
 import { MaterialCommunityIcon, CheckIcon } from "components/Icon";
 import FilterList from "components/FilterList";
-import SheetHeader from "components/Sheet/SheetHeader";
+
+import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 
 import useFilter from "hooks/use-filter";
 import useStyles from "hooks/use-styles";
@@ -11,57 +12,54 @@ import useUsers from "hooks/use-users";
 
 import { localStyles } from "./UsersSheet.styles";
 
-const UsersSheet = ({ id, values, onChange }) => {
-
+const UsersSheet = ({ id, values, onChange, sharedIDs, modalName }) => {
   const { styles, globalStyles } = useStyles(localStyles);
+
+  const { dismiss } = useBottomSheetModal();
+
   const { search, onSearch } = useFilter();
 
   // exclude currently selected values from options list
-  const exclude = [];
+  let exclude = [];
   if (id) exclude.push(id);
+  if (sharedIDs && sharedIDs.length !== 0) {
+    exclude = [...exclude, ...sharedIDs];
+  }
 
-  const { data: items, error, isLoading, isValidating, mutate } = useUsers({ search, exclude });
+  const { data: items } = useUsers({ search, exclude });
   if (!items) return null;
 
-  // MAP TO API
-  const mapToAPI = (newItem) => ({
-    value: newItem?.key
-  });
-
-  // MAP FROM API
-  const mapFromAPI = (items) => {
-    return items?.map(item => {
-      // NOTE: for "UserSelect" fields (eg, "assigned_to") use "ID" rather than "contact_id" (like with "Connections")
-      return {
-        key: item?.ID,
-        label: item?.name,
-        avatar: item?.avatar,
-        contactId: item?.contact_id ? new String(item?.contact_id) : null,
-        selected: values?.some(selectedItem => Number(selectedItem?.value) === item?.contact_id),
-      };
-    });
+  const _onChange = (newValue) => {
+    onChange(newValue);
+    dismiss(modalName);
   };
 
-  const _renderItem = ({ item }) => {
-    const { key, label, icon, avatar, selected } = item;
-    return(
-      <Pressable onPress={() => onChange(item)}>
-        <View key={key} style={styles.itemContainer}>
-            {avatar && (
-              <Image style={styles.avatar} source={{ uri: avatar }} />
-            )}
-            {icon && (
-              <View style={globalStyles.rowIcon}>
-                <MaterialCommunityIcon
-                  name={icon?.name}
-                  style={[globalStyles.icon, icon?.style ? icon?.style : {}]} 
-                />
-              </View>
-            )}
-          <View style={{
-            marginEnd: "auto",
-          }}>
-            <Text>{label} (#{key})</Text>
+  const renderItem = ({ item }) => {
+    const { ID, name, icon, avatar, contact_id, selected } = item;
+    return (
+      <Pressable onPress={() => _onChange(item)}>
+        <View
+          key={ID}
+          style={[globalStyles.rowContainer, styles.itemContainer]}
+        >
+          {avatar && <Image style={styles.avatar} source={{ uri: avatar }} />}
+          {icon && (
+            <View style={globalStyles.rowIcon}>
+              <MaterialCommunityIcon
+                type={icon?.type}
+                name={icon?.name}
+                style={[globalStyles.icon, icon?.style ? icon?.style : {}]}
+              />
+            </View>
+          )}
+          <View
+            style={{
+              marginEnd: "auto",
+            }}
+          >
+            <Text>
+              {name} (#{ID})
+            </Text>
           </View>
           {selected && (
             <View style={globalStyles.rowIcon}>
@@ -73,14 +71,10 @@ const UsersSheet = ({ id, values, onChange }) => {
     );
   };
 
-  // SELECT OPTIONS
-  //const sections = useMemo(() => [{ data: mapFromAPI(items) }], [items, values]);
-  const mappedItems = mapFromAPI(items);
-
-  return(
+  return (
     <FilterList
-      items={mappedItems}
-      renderItem={_renderItem}
+      items={items}
+      renderItem={renderItem}
       search={search}
       onSearch={onSearch}
     />

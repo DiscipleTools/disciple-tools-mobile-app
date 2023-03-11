@@ -1,33 +1,34 @@
-import React, {
-  useState,
-  useLayoutEffect,
-} from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 //import { useIsFocused } from "@react-navigation/native";
 
-//import { Html5Entities } from 'html-entities';
+import { decode } from "html-entities";
 
 import {
-  CheckIcon,
-  CircleOutlineIcon,
+  ReadIcon,
+  ReadAllIcon,
+  UnreadIcon,
   CommentIcon,
   CommentAlertIcon,
   MentionIcon,
 } from "components/Icon";
-import KebabMenu from "components/KebabMenu";
+import { HeaderRight } from "components/Header/Header";
 import OfflineBar from "components/OfflineBar";
 import FilterList from "components/FilterList";
-import { PostItemSkeleton } from "components/Post/PostItem/index";
+import PostItemSkeleton from "components/Post/PostItem/PostItemSkeleton";
 
 import useFilter from "hooks/use-filter";
-import useNotifications from "hooks/use-notifications";
+import useHaptics from "hooks/use-haptics";
+import useI18N from "hooks/use-i18n";
 //import useMyUser from 'hooks/use-my-user.js';
+import useNotifications from "hooks/use-notifications";
 import useStyles from "hooks/use-styles";
-import useType from "hooks/use-type"; 
+import useType from "hooks/use-type";
 
 import { NotificationActionConstants, ScreenConstants } from "constants";
 
-import { truncate } from "utils";
+import { parseDateShort, truncate } from "utils";
 
 import { localStyles } from "./NotificationsScreen.styles";
 
@@ -35,6 +36,9 @@ const NotificationsScreen = ({ navigation }) => {
   // TODO: constant
   const DEFAULT_LIMIT = 1000;
 
+  const { vibrate } = useHaptics();
+  const { i18n } = useI18N();
+  const tabBarHeight = useBottomTabBarHeight();
   const { styles, globalStyles } = useStyles(localStyles);
   const { getTabScreenFromType } = useType();
 
@@ -44,54 +48,72 @@ const NotificationsScreen = ({ navigation }) => {
   const { defaultFilter, filter, onFilter, search, onSearch } = useFilter();
 
   const {
-    data: items,
+    data: notifications,
     error,
     isLoading,
     isValidating,
     mutate,
-    markViewed,
-    markUnread,
+    hasNotifications,
+    //markViewed,
+    //markUnread,
+    markAllViewed,
+    markNotificationViewed,
+    markNotificationUnread,
   } = useNotifications({ search, filter, offset, limit });
 
-  //const { userData, error: userError } = useMyUser();
+  const [items, setItems] = useState();
 
-  const renderHeaderRight = (props) => {
-    return (
-      <View style={globalStyles.rowContainer}>
-        <View style={styles.headerIcon}>
-          <KebabMenu />
-        </View>
-      </View>
-    );
-  };
+  useEffect(() => {
+    setItems(notifications);
+  }, [hasNotifications, search, filter?.ID]);
 
   // TODO: custom useHeaderLayoutEffect hook for reuse
   useLayoutEffect(() => {
+    const kebabItems = [
+      {
+        label: i18n.t("global.viewOnWeb"),
+        urlPath: "notifications",
+      },
+      {
+        label: i18n.t("global.documentation"),
+        url: "https://disciple.tools/user-docs/disciple-tools-mobile-app/how-to-use/notifications-screen/",
+      },
+    ];
     navigation.setOptions({
-      headerRight: (props) => renderHeaderRight(props),
+      title: i18n.t("global.notifications"),
+      headerRight: (props) => {
+        return (
+          <View style={globalStyles.rowContainer}>
+            <ReadAllIcon
+              style={styles.readAllIcon(hasNotifications)}
+              onPress={() => _markAllViewed()}
+            />
+            <HeaderRight kebabItems={kebabItems} props />
+          </View>
+        );
+      },
     });
   });
 
-  const NotificationItem = ({ item }) => {
-    /*
-    {
-      "id":"123",
-      "user_id":"4567",
-      "source_user_id":"555",
-      "post_id":"42",
-      "secondary_item_id":"124",
-      "notification_name":"mention",
-      "notification_action":"mentioned",
-      "notification_note":"Jane Doe mentioned you on <a href=\"https://example.com/contacts/42\">Jane Doe</a> saying: \r\n\r\n @jdoe hi3",
-      "date_notified":"2021-03-19 23:11:52",
-      "is_new":"1",
-      "channels":null,
-      "field_key":"comments",
-      "field_value":"",
-      "post_title":"Jane Doe",
-      "pretty_time":["11 months ago","03/19/2021"]
-    }
-    */
+  const _markAllViewed = () => {
+    vibrate();
+    let newItems = items.map((item) => ({ ...item, is_new: "0" }));
+    // TODO: why delay?
+    setTimeout(() => {
+      mutate();
+    }, 1000);
+    // component state
+    setItems(newItems);
+    // TODO
+    // in-memory cache state
+    // remote API state
+    markAllViewed();
+  };
+
+  const NotificationItem = ({ item, loading, mutate }) => {
+    const [isNew, setIsNew] = useState(item?.is_new === "1" ? true : false);
+
+    if (!item || loading) return <PostItemSkeleton />;
     const str1 = item?.notification_note?.search("<");
     const str2 = item?.notification_note?.search(">");
     const str3 = item?.notification_note?.length - 4;
@@ -105,29 +127,9 @@ const NotificationsScreen = ({ navigation }) => {
     );
     let id = entityLink?.split("/")[4];
     let type = entityLink?.split("/")[3];
-    // TODO
-    //const entities = new Html5Entities();
-    const isNew = item?.is_new === "1" ? true : false;
+
     const name = item?.notification_name;
     const action = item?.notification_action;
-
-    const parseDate = (dateStr) => {
-      try {
-        const today = new Date();
-        //const parsedDateMS = Date.parse(dateStr?.trim());
-        const parsedDateMS = Date.parse(dateStr?.trim()?.split(" ")[0]);
-        const diffMS = today - parsedDateMS;
-        const aDay = 24 * 60 * 60 * 1000;
-        const isToday = diffMS < aDay;
-        const diffDays = Math.floor(diffMS / aDay);
-        if (isNaN(diffDays)) return null;
-        // TODO: translate
-        if (isToday) return "today";
-        return `${diffDays}d`;
-      } catch (error) {
-        return null;
-      }
-    };
 
     const NotificationIcon = () => {
       const renderIcon = () => {
@@ -149,8 +151,7 @@ const NotificationsScreen = ({ navigation }) => {
     const NotificationDetails = () => (
       <View style={globalStyles.columnContainer}>
         <View style={[globalStyles.rowContainer, styles.notificationDetails]}>
-          {/*<Text>{entities.decode(newNotificationNoteA)}</Text>*/}
-          <Text>{newNotificationNoteA}</Text>
+          <Text>{truncate(decode(newNotificationNoteA))}</Text>
           <Pressable
             onPress={() => {
               const tabScreen = getTabScreenFromType(type);
@@ -162,11 +163,8 @@ const NotificationsScreen = ({ navigation }) => {
               });
             }}
           >
-            <Text
-              style={globalStyles.link}
-            >
-              {truncate(newNotificationNoteC, { maxLength: 35 })}
-              {/*entities.decode(newNotificationNoteC)*/}
+            <Text style={globalStyles.link}>
+              {truncate(decode(newNotificationNoteC))}
             </Text>
           </Pressable>
         </View>
@@ -178,52 +176,91 @@ const NotificationsScreen = ({ navigation }) => {
             </Text>
           ) : (
             <Text style={globalStyles.caption}>
-              {parseDate(item?.date_notified)}
+              {parseDateShort(item?.date_notified)}
             </Text>
           )}
         </View>
       </View>
     );
 
+    const _markViewed = ({ id }) => {
+      // component state
+      setIsNew(false);
+      // in-memory cache state
+      // TODO:
+      // remote API state
+      markNotificationViewed({ notificationId: id });
+      return;
+    };
+
+    const _markUnread = ({ id }) => {
+      // component state
+      setIsNew(true);
+      // TODO:
+      // in-memory cache state
+      // remote API state
+      markNotificationUnread({ notificationId: id });
+      return;
+    };
+
     const NotificationButton = () => (
-      <View style={globalStyles.rowIcon}>
-        <Pressable
-          onPress={() => {
-            const id = item?.id;
-            if (id) return isNew ? markViewed({ id }) : markUnread({ id });
-          }}
-        >
-          {isNew ? (
-            <CircleOutlineIcon />
-          ) : (
-            <CheckIcon style={globalStyles.selectedIcon} />
-          )}
-        </Pressable>
-      </View>
+      <Pressable
+        onPress={() => {
+          vibrate();
+          const id = item?.id;
+          if (id) {
+            if (isNew) {
+              _markViewed({ id });
+              return;
+            }
+            _markUnread({ id });
+            return;
+          }
+        }}
+        style={[globalStyles.rowIcon, styles.markIcon]}
+      >
+        {isNew ? (
+          <UnreadIcon />
+        ) : (
+          <ReadIcon style={globalStyles.selectedIcon} />
+        )}
+      </Pressable>
     );
 
     return (
       <View style={[globalStyles.rowContainer, styles.container(isNew)]}>
-        <View style={{
-          flex: 1,
-        }}>
+        <View
+          style={{
+            flex: 1,
+          }}
+        >
           <NotificationIcon />
         </View>
-        <View style={{
-          flex: 6,
-        }}>
+        <View
+          style={{
+            flex: 6,
+          }}
+        >
           <NotificationDetails />
         </View>
-        <View style={{
-          flex: 1,
-        }}>
+        <View
+          style={{
+            flex: 1,
+            paddingHorizontal: 20,
+          }}
+        >
           <NotificationButton />
         </View>
       </View>
     );
   };
 
-  const renderItem = ({ item }) => <NotificationItem item={item} />;
+  // NOTE: wrap in empty view, otherwise `react-native-swipe-view` requires React.forwardRef
+  const renderItem = ({ item }) => (
+    <>
+      <NotificationItem item={item} loading={isLoading} mutate={mutate} />
+    </>
+  );
 
   // TODO: reusable component
   const ListSkeleton = () =>
@@ -233,7 +270,7 @@ const NotificationsScreen = ({ navigation }) => {
 
   if (!items) return <ListSkeleton />;
   return (
-    <View style={globalStyles.container}>
+    <View style={[globalStyles.container(tabBarHeight)]}>
       <OfflineBar />
       <FilterList
         display
@@ -241,6 +278,7 @@ const NotificationsScreen = ({ navigation }) => {
         items={items}
         renderItem={renderItem}
         //renderHiddenItem={renderHiddenItem}
+        keyExtractor={(item) => item?.id}
         search={search}
         onSearch={onSearch}
         defaultFilter={defaultFilter}

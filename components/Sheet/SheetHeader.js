@@ -3,39 +3,47 @@ import { View, Text } from "react-native";
 
 import { CloseIcon, ExpandIcon } from "components/Icon";
 
-import useBottomSheet from 'hooks/use-bottom-sheet';
+import { useBottomSheetModal } from "@gorhom/bottom-sheet";
+
 import useStyles from "hooks/use-styles";
 
-import { truncate } from "utils";
+import { titleize } from "utils";
 
 import { localStyles } from "./SheetHeader.styles";
 
-const SheetHeader = ({ expandable, dismissable, title, onDismiss }) => {
+const SheetHeader = ({
+  expandable,
+  dismissable,
+  title,
+  onDismiss,
+  modalName,
+}) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  const { expand, collapse, snapPoints, snapIndex, snapToIndex } = useBottomSheet();
+  const { dismiss } = useBottomSheetModal();
+  // TODO:
+  /*
+  const { expand, collapse, snapPoints, snapIndex, snapToIndex } =
+    useBottomSheet();
   // TODO: lazy initialize
-  const lastIdx = snapPoints?.length-1;
+  const lastIdx = snapPoints?.length - 1;
   const isExpanded = snapIndex === lastIdx;
-  const onPressExpand = isExpanded ? () => snapToIndex(0) : () => snapToIndex(lastIdx);
+  const onPressExpand = isExpanded
+    ? () => snapToIndex(0)
+    : () => snapToIndex(lastIdx);
+  */
   const onPressDismiss = () => {
     if (onDismiss) onDismiss();
-    collapse();
+    dismiss(modalName);
   };
-  return(
-    <View style={[
-      globalStyles.rowContainer,
-      styles.container
-    ]}>
-      <View>
-      { title?.length > 0 && (
-        <Text style={globalStyles.title}>{truncate(title, { maxLength: 35 })}</Text>
+  return (
+    <View style={[globalStyles.rowContainer, styles.container]}>
+      {title?.length > 0 && (
+        <View>
+          <Text style={globalStyles.title}>{titleize(title)}</Text>
+        </View>
       )}
-      </View>
-      <View style={[
-        globalStyles.rowContainer,
-        styles.controls
-      ]}>
-      {/* {expandable && (
+      <View style={[globalStyles.rowContainer, styles.controls]}>
+        {/* {expandable && (
         <ExpandIcon
           onPress={() => onPressExpand()}
           style={[
@@ -43,12 +51,12 @@ const SheetHeader = ({ expandable, dismissable, title, onDismiss }) => {
           ]}
         />
       )} */}
-      {dismissable && (
-        <CloseIcon
-          onPress={() => onPressDismiss()}
-          style={styles.closeIcon}
-        />
-      )}
+        {dismissable !== false && (
+          <CloseIcon
+            onPress={() => onPressDismiss()}
+            style={styles.closeIcon}
+          />
+        )}
       </View>
     </View>
   );

@@ -1,6 +1,6 @@
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   rowContainer: {
-    alignItems: "center"
+    alignItems: "center",
   },
   bodyContainer: {
     alignItems: "center",
@@ -12,7 +12,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     borderColor: theme.highlight,
     color: theme.offLight,
     marginHorizontal: 10,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   buttonText: {
     color: theme.text.primary,

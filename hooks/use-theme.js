@@ -1,18 +1,25 @@
-//import React from "react";
+import React, { useMemo } from "react";
 import { Appearance, useColorScheme } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-
-//import useDevice from "hooks/use-device";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 
 import { setTheme } from "store/actions/user.actions";
 
 import { ThemeConstants, defaultThemeLight, defaultThemeDark } from "constants";
 
+const areEqual = (prevItem, nextItem) => {
+  return (
+    prevItem?.mode === nextItem?.mode &&
+    prevItem?.brand?.primary === nextItem?.brand?.primary
+  );
+};
+
 const useTheme = () => {
   const colorScheme = useColorScheme();
   const dispatch = useDispatch();
-  const persistedTheme = useSelector((state) => state.userReducer.theme);
-  //const { isIOS } = useDevice();
+  const persistedTheme = useSelector(
+    (state) => state.userReducer.theme,
+    areEqual
+  );
 
   let mode = persistedTheme?.mode || colorScheme;
   if (!mode || (mode !== ThemeConstants.DARK && mode !== ThemeConstants.LIGHT))
@@ -24,12 +31,6 @@ const useTheme = () => {
 
   //if (persistedTheme?.mode !== theme?.mode) setTheme(theme);
 
-  // NOTE: listen for device changes
-  Appearance.addChangeListener((scheme) => {
-    console.log(`*** Appearance.addChangeListener: ${JSON.stringify(scheme)}`);
-    //if (scheme?.colorScheme !== mode) dispatch(setTheme(scheme?.colorScheme));
-  });
-
   const _setTheme = (theme) => dispatch(setTheme(theme));
 
   const toggleMode = () =>
@@ -37,11 +38,14 @@ const useTheme = () => {
 
   const isDarkMode = mode === ThemeConstants.DARK;
 
-  return {
-    isDarkMode,
-    toggleMode,
-    theme,
-    setTheme: _setTheme,
-  };
+  return useMemo(
+    () => ({
+      isDarkMode,
+      toggleMode,
+      theme,
+      setTheme: _setTheme,
+    }),
+    [isDarkMode, theme?.mode]
+  );
 };
 export default useTheme;

@@ -6,15 +6,22 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     borderBottomWidth: 1,
     borderBottomColor: theme.background.primary,
     paddingTop: 10,
-    paddingHorizontal: 5,
     height: Constants.LIST_ITEM_HEIGHT,
   }),
   notificationDetails: {
     flexWrap: "wrap",
     marginEnd: "auto",
   },
+  startIcon: {
+    //justifyContent: "center",
+    marginTop: 5,
+  },
+  markIcon: {
+    height: "100%",
+    justifyContent: "center",
+  },
   link: {
-    color: theme.text.link
+    color: theme.text.link,
   },
   dontHaveNotificationsText: {
     fontSize: 14,
@@ -24,4 +31,8 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     alignItems: "center",
     justifyContent: "center",
   },
+  readAllIcon: (hasNotifications) => ({
+    fontSize: 24,
+    color: hasNotifications ? theme.text.link : theme.placeholder,
+  }),
 });

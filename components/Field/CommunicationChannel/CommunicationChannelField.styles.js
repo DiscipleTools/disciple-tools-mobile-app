@@ -1,4 +1,4 @@
-import Constants from 'constants';
+import Constants from "constants";
 
 // TODO: refactor to use global styles
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
@@ -16,16 +16,19 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     marginEnd: "auto",
     flex: 11,
     width: "100%",
-  },
-  input: {
-    color: theme.text.primary,
     paddingHorizontal: 10,
   },
+  input: (showSave) => ({
+    color: theme.text.primary,
+    // TODO: refactor out percentage widths
+    width: showSave ? "85%" : "100%",
+  }),
   controlIcons: {
-    justifyContent: "space-between"
+    paddingVertical: 10,
+    justifyContent: "space-between",
   },
-  removeIcon: {
+  actionIcons: {
     flex: 1,
-    justifyContent: "center"
+    justifyContent: "center",
   },
 });

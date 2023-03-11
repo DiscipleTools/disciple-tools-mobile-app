@@ -1,4 +1,4 @@
-import Constants from 'constants';
+import Constants from "constants";
 
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   container: {
@@ -19,6 +19,10 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   linkingText: {
     color: theme.text.link,
     textDecorationLine: "underline",
+    paddingHorizontal: 10,
+  },
+  unlinkingText: {
+    color: theme.text.primary,
     paddingHorizontal: 10,
   },
 });

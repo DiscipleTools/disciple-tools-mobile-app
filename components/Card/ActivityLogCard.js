@@ -1,91 +1,122 @@
-import React, { useEffect } from "react";
-import { Pressable, Text, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import React, { useState, useEffect } from "react";
+import { Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 
-import ExpandableCard from "components/Card/ExpandableCard";
+import Card from "components/Card/Card";
+
 import useI18N from "hooks/use-i18n";
 import useActivityLog from "hooks/use-activity-log";
-import useBottomSheet from "hooks/use-bottom-sheet";
+
 import useStyles from "hooks/use-styles";
-import useType from "hooks/use-type";
 
 import { ScreenConstants } from "constants";
 
 import { localStyles } from "./ActivityLogCard.styles";
+import RenderActivityLog from "components/RenderActivityLog";
+import { TypeConstants } from "constants";
 
 const ActivityLogCard = ({ preview, refreshing }) => {
+  // NOTE: invoking this hook causes the desired re-render onBack()
+  useIsFocused();
+
+  const [accordionState, setAccordionState] = useState([]);
   const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
-  const { getTabScreenFromType } = useType();
-  const { collapse } = useBottomSheet();
-  const { i18n } = useI18N();
+  const { i18n, numberFormat } = useI18N();
 
-  // TODO: FilterList
-  const renderActivityLog = (log) => (
-    <View style={[globalStyles.columnContainer, styles.activityView]}>
-      <Pressable
-        onPress={() => {
-          const type = log?.post_type;
-          const tabScreen = getTabScreenFromType(type);
-          navigation.jumpTo(tabScreen, {
-            screen: ScreenConstants.DETAILS,
-            id: log?.object_id,
-            name: log?.object_name,
-            type,
-          });
-          collapse();
-        }}
-      >
-        <Text style={styles.activityLink}>{log?.object_name}</Text>
-      </Pressable>
-      <Text style={styles.activityText}>{log?.object_note}</Text>
-    </View>
-  );
-
-  const {
-    data: activityLog,
-    error,
-    isLoading,
-    isValidating,
-    mutate,
-  } = useActivityLog();
+  useEffect(() => {
+    if (groupedActivityLog) {
+      setAccordionState(
+        new Array(Object.keys(groupedActivityLog).length).fill(false)
+      );
+    }
+  }, [groupedActivityLog]);
 
   // force data refresh on reload
   useEffect(() => {
     if (refreshing && mutate) mutate();
   }, [refreshing]);
 
-  const renderExpandedCard = () => (
-    <ScrollView
-      style={{
-        padding: 10,
-      }}
-    >
-      {activityLog?.map(renderActivityLog)}
-    </ScrollView>
+  const handleAccordionChange = (groupIndex) => {
+    const updatedAccordionState = accordionState.map((item, index) =>
+      index === groupIndex ? !item : item
+    );
+    setAccordionState(updatedAccordionState);
+  };
+
+  // TODO: FilterList
+  const renderActivityLog = (logs, idx) => {
+    return (
+      <RenderActivityLog
+        key={logs?.[0] ?? Math.random()}
+        logs={logs}
+        index={idx}
+        accordionState={accordionState}
+        handleAccordionChange={handleAccordionChange}
+      />
+    );
+  };
+
+  const { data: activityLog, mutate } = useActivityLog();
+  if (!activityLog) return null;
+
+  // sort activity log (grouped sort below depends on it - using 0th index)
+  activityLog.sort((a, b) => new Date(b?.hist_time) - new Date(a?.hist_time));
+
+  // group by post
+  let groupedActivityLog = {};
+  activityLog?.forEach((element) => {
+    let logKey = element?.object_id;
+    const logType = element?.object_type;
+    if (logType === TypeConstants.CONTACT || logType === TypeConstants.GROUP) {
+      if (!groupedActivityLog?.[logKey]) {
+        groupedActivityLog[logKey] = [];
+      }
+      groupedActivityLog[logKey].push({ ...element });
+    }
+  });
+
+  // sort posts by most recent activity
+  const sortedGroupedActivityLog = Object.entries(groupedActivityLog).sort(
+    (a, b) => {
+      // 0th is most recent bc 'Activity Log' already sorted (by 'hist_time')
+      const aLatestLog = a[1][0];
+      const bLatestLog = b[1][0];
+      return (
+        new Date(Number(bLatestLog?.hist_time) * 1000) -
+        new Date(Number(aLatestLog?.hist_time) * 1000)
+      );
+    }
   );
+
+  const renderExpandedCard = () => {
+    navigation.navigate(ScreenConstants.ALL_ACTIVITY_LOGS, {
+      paramsData: {
+        title,
+        data: sortedGroupedActivityLog,
+      },
+    });
+  };
 
   const renderPartialCard = () => (
     <>
-      <View>{activityLog?.slice(0, preview ?? 3)?.map(renderActivityLog)}</View>
-      {activityLog?.length > 1 && (
-        <View style={styles.etcetera}>
-          <Text>...</Text>
-        </View>
-      )}
+      <View>
+        {sortedGroupedActivityLog.slice(0, preview).map(renderActivityLog)}
+      </View>
+      <View style={styles.etcetera}>
+        <Text>...</Text>
+      </View>
     </>
   );
 
   const title = i18n.t("global.activityLog");
-  if (!activityLog) return null;
   return (
-    <ExpandableCard
+    <Card
       border
       title={title}
-      count={activityLog?.length}
-      renderPartialCard={renderPartialCard}
-      renderExpandedCard={renderExpandedCard}
+      body={renderPartialCard()}
+      onPress={() => renderExpandedCard()}
     />
   );
 };

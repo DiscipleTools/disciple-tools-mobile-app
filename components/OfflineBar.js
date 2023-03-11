@@ -8,15 +8,13 @@ import useStyles from "hooks/use-styles";
 import { localStyles } from "./OfflineBar.styles";
 
 const OfflineBar = () => {
-  const { isConnected } = useNetwork();
+  const { isInitializing, isConnected } = useNetwork();
   const { styles } = useStyles(localStyles);
   const { i18n } = useI18N();
-  if (isConnected) return null;
+  if (isInitializing || isConnected) return null;
   return (
     <View style={styles.offlineBar}>
-      <Text style={styles.offlineBarText}>
-        {i18n.t("global.offline")}
-      </Text>
+      <Text style={styles.offlineBarText}>{i18n.t("global.offline")}</Text>
     </View>
   );
 };

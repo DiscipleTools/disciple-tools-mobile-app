@@ -1,13 +1,12 @@
 import * as actions from "store/actions/user.actions";
 import { REHYDRATE } from "redux-persist/lib/constants";
-
+import { REINITIALIZE_REDUX } from "store/rootActions";
 
 const userDataInitialState = {
   username: null,
   displayName: null,
   locale: null,
   id: null,
-  expoPushToken: null,
   theme: null,
 };
 const initialState = {
@@ -18,12 +17,10 @@ const initialState = {
   userData: {
     ...userDataInitialState,
   },
-  rememberLoginDetails: null,
-  isAutoLogin: null,
-  hasPIN: null,
-  cnoncePIN: null,
-  cnonceLogin: null,
-  isSignout: null,
+  refresh: {
+    locations: null,
+    peopleGroups: null,
+  },
 };
 
 export default function userReducer(state = initialState, action) {
@@ -33,11 +30,9 @@ export default function userReducer(state = initialState, action) {
   };
   switch (action.type) {
     case REHYDRATE:
-      console.log("*** REHYDRATE! ***");
-      return {
-        ...newState,
-        loading: false,
-      };
+      return state;
+    case REINITIALIZE_REDUX:
+      return initialState;
     case actions.SET_FILTER:
       return {
         ...newState,
@@ -46,7 +41,7 @@ export default function userReducer(state = initialState, action) {
         },
         filters: {
           ...newState?.filters,
-          [action?.key]: action?.filter
+          [action?.key]: action?.filter,
         },
       };
     case actions.SET_THEME:
@@ -121,15 +116,6 @@ export default function userReducer(state = initialState, action) {
         ...newState,
         error: action?.error,
         loading: false,
-      };
-    //case actions.USER_GET_PUSH_TOKEN:
-    case actions.USER_ADD_PUSH_TOKEN:
-      return {
-        ...newState,
-        userData: {
-          ...newState?.userData,
-          expoPushToken: action?.expoPushToken,
-        },
       };
     case actions.USER_LOGOUT_SUCCESS:
       return {

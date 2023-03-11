@@ -1,18 +1,14 @@
 import axios from "axios";
 import { AppConstants } from "constants";
 
-export const getBaseUrl = (domain) => {
-  return `${AppConstants.PROTOCOL}://${domain}/wp-json/`;
-};
-
 // TODO: https://github.com/axios/axios#cancellation
-// AbortController 
+// AbortController
 
 // NOTE: the baseURL and Authorization Header will be set upon successful login,
-// for subsequent reuse with JWT, etc... (see: hooks/useMyUser::login(..))
+// for subsequent reuse with JWT, etc... (see: hooks/use-auth.js)
 const instance = axios.create({
   headers: {
-    "Content-Type": "application/json",
+    "Content-Type": AppConstants.CONTENT_TYPE_JSON,
   },
   timeout: AppConstants.TIMEOUT,
 });

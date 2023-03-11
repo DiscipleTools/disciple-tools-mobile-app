@@ -5,13 +5,13 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
     height: "100%",
   },
   skeletonBackground: {
-    backgroundColor: theme.divider
+    backgroundColor: theme.divider,
   },
   skeletonForeground: {
-    backgroundColor: theme.background.primary
+    backgroundColor: theme.background.primary,
   },
   titleBarMock: {
     backgroundColor: theme.background.primary,
     height: 35,
-  }
+  },
 });

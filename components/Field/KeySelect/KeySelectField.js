@@ -1,133 +1,158 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { Text, View } from "react-native";
 
 import { SquareIcon } from "components/Icon";
 import Select from "components/Select";
+import ModalSheet, { getDefaultIndex } from "components/Sheet/ModalSheet";
 import SelectSheet from "components/Sheet/SelectSheet";
-import SheetHeader from "components/Sheet/SheetHeader";
 
-import useBottomSheet from "hooks/use-bottom-sheet";
+import useAPI from "hooks/use-api";
+import useCache from "hooks/use-cache";
+//import useId from "hooks/use-id";
 import useStyles from "hooks/use-styles";
 
 import { FieldNames } from "constants";
 
 import { localStyles } from "./KeySelectField.styles";
 
-const KeySelectField = ({ editing, field, value, onChange }) => {
+// eg, {"group_status":"inactive"}
+const mapToAPI = ({ fieldKey, newValue }) => ({ [fieldKey]: newValue?.key });
 
-  const { styles, globalStyles } = useStyles(localStyles);
-  const { expand } = useBottomSheet();
-  const _snapPoints = ['33%','50%','66%','95%'];
+const KeySelectFieldEdit = ({
+  cacheKey,
+  fieldOptions,
+  fieldKey,
+  fieldLabel,
+  selectedLabel,
+  value,
+  setValue,
+  onChange,
+  mutate,
+}) => {
+  const { styles } = useStyles(localStyles);
+  //const postId = useId();
+  const { setCacheByKey } = useCache();
+  const { updatePost } = useAPI();
 
-  // ITEMS
-  const items = field?.default;
-
-  // SELECTED 
-  const selectedLabel = items[value]?.label ?? ''; 
-
-  // EDIT MODE
-  const KeySelectFieldEdit = () => {
-
-    // MAP TO API
-    const mapToAPI = (item) => {
-      return item?.key;
-    };
-
-    // ON CHANGE
-    const _onChange = (newValue) => {
-      const mappedValue = mapToAPI(newValue);
-      if (mappedValue !== value) {
-        onChange(mappedValue, {
-          autosave: true,
-        });
-      };
-    };
-
-    const isStatusField = () => {
-      if (
-        field?.name === FieldNames.OVERALL_STATUS ||
-        field?.name === FieldNames.GROUP_STATUS
-      ) return true;
-      return false;
-    };
-
-    const mapIcon = (key) => {
-      const style = items[key]?.color ? { color: items[key].color } : null;
-      if (isStatusField()) return <SquareIcon style={style} />;
-      return null;
-    };
-
-    // MAP ITEMS
-    const mapItems = (items) => {
-      const keys = Object.keys(items);
-      return keys.map(key => {
-        return {
-          key,
-          label: items[key]?.label,
-          icon: mapIcon(key),
-          selected: value === key, 
-        };
-      });
-    };
-
-    // SECTIONS 
-    const sections = [{ data: mapItems(items) }];
-
-    const title = field?.label;
-
-    const KeySelectSheet = () => (
-      <SelectSheet
-        required
-        sections={sections}
-        onChange={_onChange}
-      />
-    );
-
-    // TODO: move to use-bottom-sheet hook
-    const getDefaultSheetSnapIndex = () => {
-      const optionsCount = sections?.[0]?.data?.length;
-      if (optionsCount <= 3) return 0;
-      if (optionsCount <= 5) return 1;
-      if (optionsCount <= 9) return 2;
-      if (optionsCount <= 11) return 3;
-      return _snapPoints.length-1; // 4 in this case
-    };
-
-    const getBackgroundColor = () => {
-      if (items[value]?.color) return items[value].color;
-      return globalStyles.background?.backgroundColor;
-     
-    };
-
-    const renderItem = (item) => <Text>{item}</Text>;
-
-    // TODO: items[value]?.description (for when "Not Ready")
-    return(
-      <Select
-        onOpen={() => {
-          expand({
-            defaultIndex: getDefaultSheetSnapIndex(),
-            renderHeader: () => (
-              <SheetHeader
-                expandable
-                dismissable
-                title={title}
-              />
-            ),
-            renderContent: () => <KeySelectSheet />
-          });
-        }}
-        items={[selectedLabel]}
-        renderItem={renderItem}
-        style={{ backgroundColor: getBackgroundColor() }}
-      />
-    );
+  // TODO: TS type "newValue"
+  const _onChange = async (newValue) => {
+    if (newValue?.key !== value?.key) {
+      modalRef.current?.dismiss();
+      // component state
+      setValue(newValue);
+      const data = mapToAPI({ fieldKey, newValue });
+      // grouped/form state (if applicable)
+      if (onChange) {
+        onChange({ key: fieldKey, value: { key: data?.[fieldKey] } });
+        return;
+      }
+      // in-memory cache (and persisted storage) state
+      // TODO: use cache, mutate directly
+      setCacheByKey({ cacheKey, fieldKey, newValue });
+      // remote API state
+      await updatePost({ data });
+      // force mutate (to display/hide status reason)
+      mutate();
+    }
+    return;
   };
 
-  // VIEW MODE
-  const KeySelectFieldView = () => <Text>{selectedLabel}</Text>;
+  const isStatusField =
+    fieldKey === FieldNames.OVERALL_STATUS ||
+    fieldKey === FieldNames.GROUP_STATUS;
 
-  if (editing) return <KeySelectFieldEdit />;
-  return <KeySelectFieldView />;
+  const mapValueToComponent = ({ options, value }) => {
+    const keys = Object.keys(options);
+    const data = keys.map((key) => {
+      const backgroundColor = options?.[key]?.color;
+      return {
+        key,
+        label: options[key]?.label,
+        icon: isStatusField ? (
+          <SquareIcon
+            style={backgroundColor ? { color: backgroundColor } : null}
+          />
+        ) : null,
+        selected: value === key,
+      };
+    });
+    return [{ data }];
+  };
+
+  const sections = mapValueToComponent({
+    options: fieldOptions,
+    value: value?.key,
+  });
+
+  const renderItem = (item, idx) => (
+    <View key={idx} style={styles.container}>
+      <Text>{item}</Text>
+    </View>
+  );
+
+  // MODAL SHEET
+  const modalRef = useRef(null);
+  const modalName = `${fieldKey}_modal`;
+  const defaultIndex = getDefaultIndex({ items: sections?.[0]?.data });
+
+  const backgroundColor = fieldOptions?.[value?.key]?.color ?? null;
+
+  // TODO: postItem.description (for Reason)
+  return (
+    <>
+      <Select
+        onOpen={() => modalRef.current?.present()}
+        items={[selectedLabel]}
+        renderItem={renderItem}
+        style={{ backgroundColor }}
+      />
+      <ModalSheet
+        ref={modalRef}
+        name={modalName}
+        title={fieldLabel}
+        defaultIndex={defaultIndex}
+      >
+        <SelectSheet
+          required
+          sections={sections}
+          onChange={_onChange}
+          modalName={modalName}
+        />
+      </ModalSheet>
+    </>
+  );
+};
+
+const KeySelectFieldView = ({ selectedLabel }) => <Text>{selectedLabel}</Text>;
+
+const KeySelectField = ({
+  editing,
+  cacheKey,
+  fieldKey,
+  field,
+  value,
+  onChange,
+  mutate,
+}) => {
+  const [_value, _setValue] = useState(value);
+  const fieldOptions = field?.default;
+  const selectedLabel = fieldOptions[_value?.key]?.label ?? "";
+
+  if (editing) {
+    return (
+      <KeySelectFieldEdit
+        cacheKey={cacheKey}
+        fieldOptions={fieldOptions}
+        fieldKey={fieldKey}
+        fieldLabel={field?.name}
+        selectedLabel={selectedLabel}
+        value={_value}
+        setValue={_setValue}
+        onChange={onChange}
+        mutate={mutate}
+      />
+    );
+  }
+  return <KeySelectFieldView selectedLabel={selectedLabel} />;
 };
 export default KeySelectField;

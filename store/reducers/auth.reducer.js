@@ -1,58 +1,77 @@
 import * as actions from "store/actions/auth.actions";
 import { REHYDRATE } from "redux-persist/lib/constants";
-import { CLEAR_REDUX_DATA } from "store/rootActions";
+import { REINITIALIZE_REDUX } from "store/rootActions";
 
+// default to isAutoLogin=true (https://github.com/DiscipleTools/disciple-tools-mobile-app/issues/632)
 const initialState = {
   rehydrate: false,
-  isAutoLogin: null,
+  isAutoLogin: true,
   rememberLoginDetails: null,
+  cnonceLogin: null,
   hasPIN: null,
   cnoncePIN: null,
+  domain: "",
+  username: "",
+  password: "",
 };
 
 export default function authReducer(state = initialState, action) {
   switch (action.type) {
-    case CLEAR_REDUX_DATA:
-      return initialState;
     case REHYDRATE:
       return {
         ...state,
-        rehydrate: true 
+        rehydrate: true,
       };
+    case REINITIALIZE_REDUX:
+      return initialState;
     case actions.AUTH_TOGGLE_AUTO_LOGIN:
       return {
         ...state,
         isAutoLogin: !state.isAutoLogin,
-        rehydrate: false 
+        rehydrate: false,
       };
     case actions.AUTH_TOGGLE_REMEMBER_LOGIN_DETAILS:
       return {
         ...state,
         rememberLoginDetails: !state.rememberLoginDetails,
-        rehydrate: false 
+        rehydrate: false,
       };
-    case actions.AUTH_TOGGLE_HAS_PIN:
+    case actions.AUTH_SET_CNONCE_LOGIN:
       return {
         ...state,
-        hasPIN: !state.hasPIN,
-        rehydrate: false 
+        cnonceLogin: action?.cnonceLogin,
+        rehydrate: false,
       };
     case actions.AUTH_SET_HAS_PIN:
       return {
         ...state,
         hasPIN: action?.hasPIN,
-        rehydrate: false 
+        rehydrate: false,
       };
     case actions.AUTH_SET_CNONCE_PIN:
       return {
         ...state,
         cnoncePIN: action?.cnoncePIN,
-        rehydrate: false 
+        rehydrate: false,
+      };
+    case actions.AUTH_SET_FORM_FIELD:
+      return {
+        ...state,
+        [action?.key]: action?.value,
+        rehydrate: false,
+      };
+    case actions.AUTH_CLEAR_FORM_FIELDS:
+      return {
+        ...state,
+        domain: "",
+        username: "",
+        password: "",
+        rehydrate: false,
       };
     default:
       return {
         ...state,
-        rehydrate: false 
+        rehydrate: false,
       };
   }
 }

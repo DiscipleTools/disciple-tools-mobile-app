@@ -4,22 +4,39 @@ import SelectSheet from "./SelectSheet";
 
 import useAPI from "hooks/use-api";
 import useI18N from "hooks/use-i18n";
-import useMyUser from "hooks/use-my-user";
 
-const LanguageSheet = () => {
-  const { data: user } = useMyUser();
+const LanguageSheet = ({ availableTranslations }) => {
   const { updateUser } = useAPI();
 
   const { i18n, locale, setLocale } = useI18N();
 
+  /*
+   * NOTE: we filter languages unsupported by D.T API here rather than in the
+   * 'use-i18n' hook for performance reasons. Plus, this is where it matters
+   * most since the user is switching and we attempt to update the API.
+   */
+  const getSupportedTranslations = () => {
+    const supportedTranslations = {};
+    for (const translation of Object.keys(i18n.translations)) {
+      if (availableTranslations?.includes(translation)) {
+        supportedTranslations[translation] = i18n.translations[translation];
+      }
+    }
+    return supportedTranslations;
+  };
+
   // ITEMS
-  const items = i18n?.translations;
+  const items = getSupportedTranslations();
 
   // ON CHANGE
   const _onChange = (newValue) => {
     const newLocale = newValue?.key;
-    if (user) updateUser({ locale: newLocale });
-    if (newLocale) setLocale(newLocale);
+    if (newLocale) {
+      // set locale remotely
+      updateUser({ locale: newLocale });
+      // set locale locally
+      setLocale(newLocale);
+    }
   };
 
   // MAP ITEMS

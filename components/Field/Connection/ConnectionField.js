@@ -1,313 +1,299 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
-import { useRoute } from "@react-navigation/native";
 
+import { LeaderIcon } from "components/Icon";
 import Select from "components/Select";
-import PostLink from "components/Post/PostLink";
-import SheetHeader from "components/Sheet/SheetHeader";
+import PostChip from "components/Post/PostChip";
+import ModalSheet, { getDefaultIndex } from "components/Sheet/ModalSheet";
 import ConnectionSheet from "./ConnectionSheet";
-import UsersContactsSheet from "./UsersContactsSheet";
-import GroupsSheet from "./GroupsSheet";
-import PeopleGroupsSheet from "./PeopleGroupsSheet";
-import TrainingsSheet from "./TrainingsSheet";
 
-import useBottomSheet from "hooks/use-bottom-sheet";
+import useAPI from "hooks/use-api";
+import useCache from "hooks/use-cache";
+import useId from "hooks/use-id";
+import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
-import useType from "hooks/use-type";
+
+import { getStatusKey } from "helpers";
 
 import {
   groupCircleIcon,
   groupDottedCircleIcon,
-  groupChildIcon,
-  groupParentIcon,
-  groupPeerIcon,
-  groupTypeIcon,
-  swimmingPoolIcon,
+  baptizeIcon,
 } from "constants/icons";
 
-import { FieldNames, TabScreenConstants, ScreenConstants } from "constants";
+import { ScreenConstants, TabScreenConstants, TypeConstants } from "constants";
 
 import { localStyles } from "./ConnectionField.styles";
+import { FieldNames } from "constants";
 
-const ConnectionField = ({ editing, field, value, onChange }) => {
+// eg, {"coaches":{"values":[{"value":"101"}]}}
+const mapToAPI = ({ fieldKey, newValue }) => {
+  return { [fieldKey]: { values: [{ value: newValue?.ID }] } };
+};
 
+const mapToComponentRemove = ({ existingItems, id }) =>
+  existingItems.filter((item) => item.ID !== id);
+
+// eg, {"coaches":{"values":[{"value":"101"}]}}
+const mapToAPIRemove = ({ key, id }) => {
+  return { [key]: { values: [{ value: id, delete: true }] } };
+};
+
+const renderItemView = (item) => (
+  <PostChip
+    key={item?.ID}
+    id={item?.ID}
+    title={item?.name || item?.post_title}
+    //type={item?.post_type}
+    type={null}
+    // TODO: requires fields to lookup
+    color={item?.status?.color}
+  />
+);
+
+// TODO: improve
+const GroupView = ({ values }) => {
+  const navigation = useNavigation();
   const { styles, globalStyles } = useStyles(localStyles);
-  const { expand } = useBottomSheet();
-  const { isPost, isContact, isGroup, getPostTypeByFieldName } = useType();
-
-  // VALUES
-  const values = value?.values || [];
-
-  const onRemove = (id) => {
-    onChange(
-      { values: [{ value: id, delete: true }]},
-      { autosave: true }
-    );
-  };
-
-  const renderItemEdit = (item) => <PostLink id={item?.value} title={item?.name} type={getPostTypeByFieldName(field?.name)} onRemove={onRemove} />;
-  const renderItemView = (item) => <PostLink id={item?.value} title={item?.name} type={getPostTypeByFieldName(field?.name)} />;
-  const renderItemLinkless = (item) => <PostLink id={item?.value} title={item?.name} onRemove={onRemove} />;
-
-  const PeopleGroupEdit = () => (
-    <Select
-      onOpen={() => {
-        expand({
-          renderHeader: () => (
-            <SheetHeader
-              expandable
-              dismissable
-              title={field?.label || ''}
-            />
-          ),
-          renderContent: () => (
-            <PeopleGroupsSheet
-              values={values}
-              onChange={onChange}
-            />
-          )
-        });
-      }}
-      items={values}
-      renderItem={renderItemLinkless}
-    />
-  );
-
-  const PostEdit = () => {
-    const route = useRoute();
-    return(
-      <Select
-        onOpen={() => {
-          expand({
-            renderHeader: () => (
-              <SheetHeader
-                expandable
-                dismissable
-                title={field?.label || ''}
-              />
-            ),
-            renderContent: () => 
-              <ConnectionSheet
-                id={route?.params?.id}
-                fieldName={field?.name}
-                values={values}
-                onChange={onChange}
-              />
-          });
-        }}
-        items={values}
-        renderItem={renderItemEdit}
-        //style={style}
-        //optionStyle={optionStyle}
-      />
-    );
-  };
-
-  const ContactEdit = () => {
-    const route = useRoute();
-    return(
-      <Select
-        onOpen={() => {
-          expand({
-            renderHeader: () => (
-              <SheetHeader
-                expandable
-                dismissable
-                title={field?.label || ''}
-              />
-            ),
-            renderContent: () => 
-              <UsersContactsSheet
-                id={route?.params?.id}
-                values={values}
-                onChange={onChange}
-              />
-          });
-        }}
-        items={values}
-        renderItem={renderItemEdit}
-        //style={style}
-        //optionStyle={optionStyle}
-      />
-    );
-  };
-
-  const GroupEdit = () => {
-    const route = useRoute();
-    return(
-      <Select
-        onOpen={() => {
-          expand({
-            renderHeader: () => (
-              <SheetHeader
-                expandable
-                dismissable
-                title={field?.label || ''}
-              />
-            ),
-            renderContent: () => 
-              <GroupsSheet
-                id={route?.params?.id}
-                values={values}
-                onChange={onChange}
-              />
-          });
-        }}
-        items={values}
-        renderItem={renderItemEdit}
-        //style={style}
-        //optionStyle={optionStyle}
-      />
-    );
-  };
-
-  const TrainingEdit = () => {
-    const route = useRoute();
-    return(
-      <Select
-        onOpen={() => {
-          expand({
-            renderHeader: () => (
-              <SheetHeader
-                expandable
-                dismissable
-                title={field?.label || ''}
-              />
-            ),
-            renderContent: () => (
-              <TrainingsSheet
-                id={route?.params?.id}
-                values={values}
-                onChange={onChange}
-              />
-            )
-          });
-        }}
-        items={values}
-        renderItem={renderItemEdit}
-        //style={style}
-        //optionStyle={optionStyle}
-      />
-    );
-  };
-
-  const PeopleGroupView = () => (
-    <Select
-      items={values}
-      renderItem={renderItemView}
-    />
-  );
-
-  const GroupView = () => {
-    const navigation = useNavigation();
-    return (
-      <View style={globalStyles.rowContainer}>
-        <ScrollView horizontal>
-          {values?.map((group, index) => {
-            const id = group?.value;
-            const title = group?.name;
-            const isChurch = group?.is_church; 
-            const baptizedMemberCount = group?.baptized_member_count?.length > 0 ? group.baptized_member_count : '0';
-            const memberCount = group?.member_count?.length > 0 ? group.member_count : '0';
-            // TODO: constant?
-            const type = "groups";
-            return (
-              <Pressable
-                key={index.toString()}
-                style={[
-                  globalStyles.columnContainer,
-                  styles.groupCircleContainer
-                ]}
-                onPress={() => {
-                  navigation.jumpTo(TabScreenConstants.GROUPS, {
-                    screen: ScreenConstants.DETAILS,
-                    id,
-                    name: title,
-                    type,
-                    //onGoBack: () => onRefresh(),
-                  });
-                }}
-              >
-                { isChurch ? (
-                  <Image
-                    source={groupCircleIcon}
-                    style={styles.groupCircle}
-                  />
-                ) : (
-                  <Image
-                    source={groupDottedCircleIcon}
-                    style={styles.groupCircle}
-                  />
-                )}
+  return (
+    <View style={globalStyles.rowContainer}>
+      <ScrollView horizontal>
+        {values?.map((group, index) => {
+          const id = group?.value;
+          const title = group?.name;
+          const isChurch = group?.is_church;
+          const baptizedMemberCount =
+            group?.baptized_member_count?.length > 0
+              ? group.baptized_member_count
+              : "0";
+          const memberCount =
+            group?.member_count?.length > 0 ? group.member_count : "0";
+          // TODO: constant?
+          const type = "groups";
+          return (
+            <Pressable
+              key={index.toString()}
+              style={[
+                globalStyles.columnContainer,
+                styles.groupCircleContainer,
+              ]}
+              onPress={() => {
+                navigation.jumpTo(TabScreenConstants.GROUPS, {
+                  screen: ScreenConstants.DETAILS,
+                  id,
+                  name: title,
+                  type,
+                  //onGoBack: () => onRefresh(),
+                });
+              }}
+            >
+              {isChurch ? (
+                <Image source={groupCircleIcon} style={styles.groupCircle} />
+              ) : (
                 <Image
-                  source={swimmingPoolIcon}
-                  style={styles.groupCenterIcon}
+                  source={groupDottedCircleIcon}
+                  style={styles.groupCircle}
                 />
-                <View style={[globalStyles.rowContainer, styles.groupCircleName]}>
-                  <Text style={styles.groupCircleNameText}>{group.name}</Text>
-                </View>
-                <View style={[globalStyles.rowContainer, styles.groupCircleCounter]}>
-                  <Text>{baptizedMemberCount}</Text>
-                </View>
-                <View style={[globalStyles.rowContainer, styles.groupCircleCounter]}>
-                  <Text>{memberCount}</Text>
-                </View>
-              </Pressable>
-            );
-          })}
-        </ScrollView>
-      </View>
+              )}
+              <Image source={baptizeIcon} style={styles.groupCenterIcon} />
+              <View style={[globalStyles.rowContainer, styles.groupCircleName]}>
+                <Text style={styles.groupCircleNameText}>{group.name}</Text>
+              </View>
+              <View
+                style={[globalStyles.rowContainer, styles.groupCircleCounter]}
+              >
+                <Text>{baptizedMemberCount}</Text>
+              </View>
+              <View
+                style={[globalStyles.rowContainer, styles.groupCircleCounter]}
+              >
+                <Text>{memberCount}</Text>
+              </View>
+            </Pressable>
+          );
+        })}
+      </ScrollView>
+    </View>
+  );
+};
+
+const PostView = ({ values }) => (
+  <Select items={values} renderItem={renderItemView} />
+);
+
+const ConnectionFieldView = ({ field, values }) => {
+  const postType = field?.post_type;
+  const isPost = field?.post_type ? true : false;
+  if (postType === TypeConstants.GROUP) return <GroupView values={values} />;
+  if (isPost) return <PostView value={values} />;
+  return null;
+};
+
+const ConnectionFieldEdit = ({
+  post,
+  cacheKey,
+  fieldKey,
+  field,
+  values,
+  setValues,
+  onChange,
+}) => {
+  const postId = useId();
+  const postType = field?.post_type;
+  const { cache, mutate } = useCache();
+  const { updatePost } = useAPI();
+
+  const { settings } = useSettings();
+  const fields = settings?.post_types?.[postType]?.fields;
+
+  const _onRemove = async ({ id }) => {
+    // component state
+    const componentData = mapToComponentRemove({ existingItems: values, id });
+    setValues(componentData);
+    // grouped/form state (if applicable)
+    /*
+    if (onChange) {
+      onChange(newValue);
+      return;
+    };
+    */
+    // in-memory cache (and persisted storage) state
+    const cachedData = cache.get(cacheKey);
+    const cachedDataModified = cachedData?.[fieldKey]?.filter(
+      (item) => item?.ID !== id.toString()
+    );
+    if (!cachedDataModified) return;
+    cachedData[fieldKey] = cachedDataModified;
+    mutate(cacheKey, async () => cachedData, { revalidate: false });
+    // remote API state
+    const data = mapToAPIRemove({ key: fieldKey, id });
+    await updatePost({ data });
+  };
+
+  const _onChange = async (newValue) => {
+    const exists = values?.find(
+      (existingItem) => existingItem?.ID === newValue?.ID
+    );
+    if (exists) {
+      _onRemove(newValue);
+      return;
+    }
+    // component state
+    setValues(values ? [...values, newValue] : [newValue]);
+    // TODO:
+    // grouped/form state (if applicable)
+    /*
+    if (onChange) {
+      onChange(newValue);
+      return;
+    };
+    */
+    // in-memory cache (and persisted storage) state
+    const cachedData = cache.get(cacheKey);
+    cachedData[fieldKey] = cachedData?.[fieldKey]
+      ? [...cachedData[fieldKey], newValue]
+      : [newValue];
+    mutate(cacheKey, async () => cachedData, { revalidate: false });
+    // remote API state
+    const data = mapToAPI({ fieldKey, newValue });
+    await updatePost({ data });
+  };
+
+  const renderItemEdit = (item) => {
+    const statusKey = getStatusKey({ postType: item?.post_type });
+    let itemStatus = statusKey;
+    // TODO: refactor
+    if (!item?.[itemStatus]?.key) itemStatus = "status";
+    const color =
+      fields?.[statusKey]?.default?.[item?.[itemStatus]?.key]?.color ?? null;
+    const leaderIds = post?.leaders?.map((leader) => leader?.ID);
+    const icon =
+      fieldKey === FieldNames.MEMBERS && leaderIds?.includes(item?.ID) ? (
+        <LeaderIcon />
+      ) : null;
+    return (
+      <PostChip
+        key={item?.ID}
+        id={item?.ID}
+        title={item?.name || item?.post_title}
+        icon={icon}
+        type={item?.post_type}
+        onRemove={() => _onRemove({ id: item?.ID })}
+        color={color}
+      />
     );
   };
 
-  const PostView = () => (
-    <Select
-      items={values}
-      renderItem={renderItemView}
+  const renderItemLinkless = (item) => (
+    <PostChip
+      key={item?.ID}
+      id={item?.ID}
+      title={item?.post_title}
+      onRemove={() => _onRemove({ id: item?.ID })}
     />
   );
 
-  const isPeopleGroupField = () => (
-    field?.name === FieldNames.PEOPLE_GROUPS
+  // MODAL SHEET
+  const modalRef = useRef(null);
+  const modalName = `${fieldKey}_modal`;
+  const defaultIndex = getDefaultIndex();
+
+  const fieldLabel = field?.name;
+  const linkless = postType === TypeConstants.PEOPLE_GROUP;
+
+  return (
+    <>
+      <Select
+        onOpen={() => modalRef.current?.present()}
+        items={values}
+        renderItem={linkless ? renderItemLinkless : renderItemEdit}
+        //style={style}
+        //optionStyle={optionStyle}
+      />
+      <ModalSheet
+        ref={modalRef}
+        name={modalName}
+        title={fieldLabel}
+        defaultIndex={defaultIndex}
+      >
+        <ConnectionSheet
+          id={postId}
+          type={postType}
+          fields={fields}
+          values={values}
+          onChange={_onChange}
+          modalName={modalName}
+        />
+      </ModalSheet>
+    </>
   );
+};
 
-  const isGroupField = () => (
-    field?.name === FieldNames.GROUPS ||
-    field?.name === FieldNames.PARENT_GROUPS ||
-    field?.name === FieldNames.PEER_GROUPS ||
-    field?.name === FieldNames.CHILD_GROUPS
-  );
+const ConnectionField = ({
+  editing,
+  post,
+  cacheKey,
+  fieldKey,
+  field,
+  value,
+  onChange,
+}) => {
+  const [_values, _setValues] = useState(value);
 
-  const isContactField = () => (
-    field?.name === FieldNames.COACHES ||
-    field?.name === FieldNames.MEMBERS
-  );
-
-  const isTrainingField = () => (
-    field?.name === FieldNames.TRAININGS
-  );
-
-  const ConnectionFieldEdit = () => {
-    if (isContactField()) return <ContactEdit />;
-    if (isPeopleGroupField()) return <PeopleGroupEdit />;
-    if (isGroupField()) return <GroupEdit />;
-    if (isTrainingField()) return <TrainingEdit />;
-    if (isContact) return <ContactEdit />;
-    if (isGroup) return <GroupEdit />;
-    if (isPost) return <PostEdit />;
-    return null;
-  };
-
-  const ConnectionFieldView = () => {
-    if (isPeopleGroupField()) return <PeopleGroupView />;
-    if (isGroupField()) return <GroupView />;
-    if (isPost) return <PostView />;
-    return null; 
-  };
-
-  if (editing) return <ConnectionFieldEdit />;
-  return <ConnectionFieldView />;
+  if (editing)
+    return (
+      <ConnectionFieldEdit
+        post={post}
+        cacheKey={cacheKey}
+        fieldKey={fieldKey}
+        field={field}
+        values={_values}
+        setValues={_setValues}
+        onChange={onChange}
+      />
+    );
+  return <ConnectionFieldView field={field} value={_values} />;
 };
 export default ConnectionField;

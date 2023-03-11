@@ -1,2 +1,2 @@
-import FilterList from './FilterList.js';
+import FilterList from "./FilterList.js";
 export default FilterList;

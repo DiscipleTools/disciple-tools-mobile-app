@@ -1,84 +1,65 @@
-import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 
-import { CheckIcon, MaterialCommunityIcon } from "components/Icon";
+import { CheckIcon } from "components/Icon";
 import FilterList from "components/FilterList";
+import StatusBorder from "components/StatusBorder";
 
-import useBottomSheet from "hooks/use-bottom-sheet";
+import { useBottomSheetModal } from "@gorhom/bottom-sheet";
+import useFilter from "hooks/use-filter";
+import useList from "hooks/use-list";
 import useStyles from "hooks/use-styles";
+
+import { TypeConstants } from "constants";
 
 import { localStyles } from "./ConnectionSheet.styles";
 
-const ConnectionSheet = ({ items, renderItem, values, onChange, search, onSearch }) => {
-
+const ConnectionSheet = ({
+  id,
+  type,
+  renderItem,
+  fields,
+  values,
+  onChange,
+  modalName,
+}) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  const { delayedClose } = useBottomSheet();
+  const { dismiss } = useBottomSheetModal();
+  const { search, onSearch } = useFilter();
 
+  // exclude currently selected values from options list
+  const exclude = values?.map((item) => item?.ID);
+  // exclude the the current post (ie, contact or group)
+  if (exclude && id) exclude.push(id);
+
+  const revalidate = type === TypeConstants.PEOPLE_GROUP ? true : false;
+
+  const { data: items } = useList({ search, exclude, type, revalidate });
   if (!items) return null;
 
-  // MAP TO API
-  const mapToAPI = (newItem) => {
-    let _values = JSON.parse(JSON.stringify(values));
-    _values = _values.map(value => ({
-      value: value?.value
-    }));
-    _values.push({
-      value: newItem?.key,
-    });
-    return _values;
-  };
-
-  // MAP FROM API
-  const mapFromAPI = (items) => {
-    return items?.map(item => {
-      const key = item?.contact_id || item?.ID || item?.value;
-      return {
-        key,
-        label: item?.name || item?.title,
-        avatar: item?.avatar,
-        contactId: item?.contact_id ? String(item?.contact_id) : null,
-        //selected: values?.some(selectedItem => Number(selectedItem?.value) === item?.contact_id),
-      };
-    });
-  };
+  // TODO: this should not be necessary with use-list defaulting to sort by last_modified (fix that first)
+  items?.sort(
+    (a, b) => b?.last_modified?.timestamp - a?.last_modified?.timestamp
+  );
 
   const _onChange = (selectedItem) => {
-    const mappedValues = mapToAPI(selectedItem);
-    if (JSON.stringify(mappedValues) !== JSON.stringify(items)) {
-      onChange(
-        { values: mappedValues },
-        { autosave: true, force: true }
-      );
-    };
-    delayedClose();
+    onChange(selectedItem);
+    dismiss(modalName);
   };
 
   const _renderItem = ({ item }) => {
-    const { key, label, icon, avatar, selected } = item;
-    return(
+    const { ID, avatar, name, post_title, selected } = item;
+    return (
       <Pressable onPress={() => _onChange(item)}>
-        <View key={key}
-          style={[
-            globalStyles.rowContainer,
-            styles.itemContainer
-          ]}
+        <View
+          key={ID}
+          style={[globalStyles.rowContainer, styles.itemContainer]}
         >
-            {avatar && (
-              <Image style={styles.avatar} source={{ uri: avatar }} />
-            )}
-            {icon && (
-              <View style={globalStyles.rowIcon}>
-                <MaterialCommunityIcon
-                  type={icon?.type}
-                  name={icon?.name}
-                  style={[globalStyles.icon, icon?.style ? icon?.style : {}]} 
-                />
-              </View>
-            )}
-          <View style={{
-            marginEnd: "auto",
-          }}>
-            <Text>{label} (#{key})</Text>
+          <StatusBorder fields={fields} item={item} />
+          {avatar && <Image style={styles.avatar} source={{ uri: avatar }} />}
+          <View style={styles.textContainer}>
+            <Text>
+              {name || post_title} (#{ID})
+            </Text>
           </View>
           {selected && (
             <View style={globalStyles.rowIcon}>
@@ -90,13 +71,9 @@ const ConnectionSheet = ({ items, renderItem, values, onChange, search, onSearch
     );
   };
 
-  // SELECT OPTIONS
-  //const sections = useMemo(() => [{ data: mapFromAPI(items) }], [items, values]);
-  const mappedItems = mapFromAPI(items);
-
-  return(
+  return (
     <FilterList
-      items={mappedItems}
+      items={items}
       renderItem={renderItem ?? _renderItem}
       search={search}
       onSearch={onSearch}

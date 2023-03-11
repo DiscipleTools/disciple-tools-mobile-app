@@ -1,71 +1,48 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
-
-import { NetworkConstants } from "constants";
+import { useNetInfo } from "@react-native-community/netinfo";
 
 import { setNetworkIsConnected } from "store/actions/network.actions";
 
-import useI18N from "hooks/use-i18n";
-import useToast from "hooks/use-toast";
+import { persistCache } from "helpers";
 
 const useNetwork = () => {
   const dispatch = useDispatch();
-  const isConnectedUserSpecified = useSelector(
+  const isConnectedUserSetting = useSelector(
     (state) => state.networkReducer.isConnected
   );
   const netInfo = useNetInfo();
 
-  /*
-   * NOTE: consider device online IFF NetInfo 'isConnected',
-   * AND the user has NOT manually specified as offline
-   */
+  const isInitializing =
+    (netInfo?.details === null &&
+      netInfo?.isConnected === null &&
+      netInfo?.isInternetReachable === null &&
+      netInfo?.type === "unknown") ||
+    (netInfo?.isConnected === true && netInfo?.isInternetReachable === null);
+
+  // 'isConnected' is a combination of device connectivity and user setting
   const isConnected =
-    netInfo?.isConnected && isConnectedUserSpecified !== false;
+    netInfo?.isInternetReachable && isConnectedUserSetting !== false;
 
-  const { i18n } = useI18N();
-  const toast = useToast();
-
-  // TODO: move to App
   /*
+  // write cache to storage on network disconnect
   useEffect(() => {
-    NetInfo.fetch().then(state => handleConnectivityChange(state.isConnected));
-    const unsubscribe = NetInfo.addEventListener(state => handleConnectivityChange(state.isConnected));
-    return () => {
-      unsubscribe();
+    if (!isConnected && !isInitializing) {
+      (async () => {
+        await persistCache();
+      })();
     };
-  }, []);
+  }, [isConnected, isInitializing]);
   */
 
-  /*
-   * Handle network connectivity changes, and fetch a common public URL
-   * (eg, https://8.8.8.8) to double-check Internet connectivity
-   */
-  const handleConnectivityChange = async (isConnected) => {
-    if (isConnected) {
-      try {
-        toast(i18n.t("networkAvailable"));
-        await fetch(NetworkConstants.NETWORK_TEST_URL);
-        dispatch(setNetworkIsConnected(true));
-      } catch (error) {
-        //console.error(error);
-        toast(i18n.t("networkUnavailable"), true);
-        dispatch(setNetworkIsConnected(false));
-      }
-    } else {
-      toast(i18n.t("networkUnavailable"), true);
-      dispatch(setNetworkIsConnected(false));
-    }
-  };
-
-  /*
-   * Manually toggle network connectivity
-   */
-  const toggleNetwork = () => handleConnectivityChange(!isConnected);
+  const toggleNetwork = useCallback((_isConnected) => {
+    dispatch(setNetworkIsConnected(_isConnected));
+  }, []);
 
   return {
-    isConnected: isConnected !== false,
+    isInitializing,
+    isConnected,
     toggleNetwork,
   };
 };

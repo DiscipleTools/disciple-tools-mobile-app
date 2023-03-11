@@ -1,6 +1,12 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { SafeAreaView, RefreshControl, Text, View } from "react-native";
-import { SwipeListView } from "react-native-swipe-list-view";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  RefreshControl,
+  View,
+} from "react-native";
+import { ScrollView, FlatList } from "react-native-gesture-handler";
+import { FlashList } from "@shopify/flash-list";
 
 import SearchBar from "./SearchBar";
 import FilterBar from "./FilterBar";
@@ -8,65 +14,81 @@ import Placeholder from "components/Placeholder";
 
 import useStyles from "hooks/use-styles";
 
+import Constants from "constants";
+
 import { localStyles } from "./FilterList.styles";
 
 const FilterList = ({
+  isFlashList,
   display,
   sortable,
   items,
   renderItem,
   renderHiddenItem,
+  keyExtractor,
   search,
   onSearch,
   defaultFilter,
   filter,
   onFilter,
+  refreshing,
   onRefresh,
   placeholder,
   leftOpenValue,
   rightOpenValue,
   onRowDidOpen,
   onRowDidClose,
-  style
+  footer,
+  style,
 }) => {
-
   const { styles, globalStyles } = useStyles(localStyles);
 
-  const [refreshing, setRefreshing] = useState(false);
+  const [_refreshing, _setRefreshing] = useState(refreshing ?? false);
 
-  const [_items, _setItems] = useState(null);
+  const [_items, setItems] = useState([]);
 
   useEffect(() => {
-    _setItems(items);
+    if (items?.length !== _items?.length) {
+      setItems(items);
+    }
   }, [items]);
 
   const _onRefresh = useCallback(() => {
-    if (onRefresh) onRefresh();
-    /*
-    setRefreshing(true);
+    if (onRefresh) {
+      onRefresh();
+      return;
+    }
+    _setRefreshing(true);
     setTimeout(() => {
-      setRefreshing(false);
+      _setRefreshing(false);
     }, 1000);
-    */
   });
 
+  const getItemLayout = useCallback(
+    (data, index) => ({
+      length: Constants.LIST_ITEM_HEIGHT,
+      offset: Constants.LIST_ITEM_HEIGHT * index,
+      index,
+    }),
+    []
+  );
+
+  // TODO: actual skeleton component for post lists
+  if (!_items) return <SafeAreaView style={styles.container} />;
   return (
-    <SafeAreaView style={[
-      styles.gutter,
-      style
-    ]}>
-      { onSearch && (
+    <View style={[styles.container, style]}>
+      {onSearch && (
         <SearchBar
           sortable={sortable}
           items={_items}
-          setItems={_setItems}
+          setItems={setItems}
           search={search}
           onSearch={onSearch}
           filter={filter}
           onFilter={onFilter}
         />
       )}
-      { onFilter && (
+      {onFilter && (
         <FilterBar
           display={display}
           items={_items}
@@ -75,37 +97,42 @@ const FilterList = ({
           onFilter={onFilter}
         />
       )}
-      {_items && _items?.length === 0 ? (
-        <View style={styles.container}>
-          <Placeholder placeholder={placeholder} />
-        </View>
-      ) : (
-        <SwipeListView
+      {isFlashList ? (
+        <FlashList
+          keyExtractor={keyExtractor}
           data={_items}
           renderItem={renderItem}
-          renderHiddenItem={renderHiddenItem ?? null}
-          leftOpenValue={leftOpenValue}
-          rightOpenValue={leftOpenValue}
-          onRowDidOpen={(item) => {
-            onRowDidOpen === undefined ? null : onRowDidOpen(item);
-          }}
-          onRowDidClose={(item) => {
-            onRowDidClose === undefined ? null : onRowDidClose(item);
-          }}
-          keyExtractor={(item) => item?.ID?.toString()}
+          ListEmptyComponent={<Placeholder placeholder={placeholder} />}
           refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={_onRefresh}
-              //colors={globalStyles.refreshControl.color}
-              //tintColor={globalStyles.refreshControl.color}
-            />
+            <RefreshControl refreshing={_refreshing} onRefresh={_onRefresh} />
           }
-          style={styles.container}
           contentContainerStyle={globalStyles.screenGutter}
+          // Performance settings
+          getItemLayout={getItemLayout}
+          estimatedItemSize={200}
+        />
+      ) : (
+        <FlatList
+          keyExtractor={keyExtractor}
+          data={_items}
+          renderItem={renderItem}
+          ListEmptyComponent={<Placeholder placeholder={placeholder} />}
+          refreshControl={
+            <RefreshControl refreshing={_refreshing} onRefresh={_onRefresh} />
+          }
+          contentContainerStyle={globalStyles.screenGutter}
+          // Performance settings
+          getItemLayout={getItemLayout}
+          estimatedItemSize={200}
         />
       )}
-    </SafeAreaView>
+      {refreshing && (
+        <View style={globalStyles.activityIndicator}>
+          <ActivityIndicator size="large" />
+        </View>
+      )}
+      {footer && <View style={styles.footer}>{footer}</View>}
+    </View>
   );
 };
 export default FilterList;

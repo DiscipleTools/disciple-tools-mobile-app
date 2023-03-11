@@ -1,38 +1,39 @@
-module.exports = function(api) {
+module.exports = function (api) {
   api.cache(true);
   return {
-    presets: ['babel-preset-expo'],
+    presets: [
+      "babel-preset-expo",
+      [
+        "@babel/preset-react",
+        {
+          importSource: "@welldone-software/why-did-you-render",
+          runtime: "automatic",
+          development: process.env.NODE_ENV === "development" || false,
+        },
+      ],
+    ],
     plugins: [
       "react-native-reanimated/plugin",
       [
-        'module-resolver',
+        "module-resolver",
         {
+          root: ["./"],
+          extensions: [".ios.js", ".android.js", ".js", ".ts", ".tsx", ".json"],
           alias: {
-            assets: './assets',
-            components: './components',
-            constants: './constants',
-            helpers: './helpers',
-            hooks: './hooks',
-            languages: './languages',
-            navigation: './navigation',
-            screens: './screens',
-            services: './services',
-            shared: './shared',
-            store: './store',
-            storybook: './storybook',
-            utils: './utils',
+            tests: ["./tests/"],
+            "@components": "./components",
           },
-          extensions: [
-            '.js',
-            '.jsx',
-            '.ts',
-            '.tsx',
-            '.android.js',
-            '.android.tsx',
-            '.ios.js',
-            '.ios.tsx',
-          ],
-          //root: ['./']
+        },
+      ],
+      [
+        "module:react-native-dotenv",
+        {
+          moduleName: "@env",
+          path: ".env",
+          blocklist: null,
+          allowlist: null,
+          safe: true,
+          allowUndefined: true,
         },
       ],
     ],

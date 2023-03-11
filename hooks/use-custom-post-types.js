@@ -6,17 +6,20 @@ import { TypeConstants } from "constants";
 const useCustomPostTypes = () => {
   const { settings } = useSettings();
   if (!settings?.post_types) return null;
-  const ignorePostTypes = [
-    TypeConstants.PEOPLEGROUPS
-  ];
-  const corePostTypes = [
-    TypeConstants.CONTACT,
-    TypeConstants.GROUP,
-  ];
-  const filteredCustomPostTypes = settings?.post_types?.filter(postType => (
-    !corePostTypes.includes(postType) &&
-    !ignorePostTypes.includes(postType)
-  ));
+
+  const mapPostTypes = (postTypes) => {
+    if (Array.isArray(postTypes)) return postTypes;
+    if (typeof postTypes === "object") return Object.keys(postTypes);
+    return [];
+  };
+
+  const availablePostTypes = mapPostTypes(settings.post_types);
+  const ignorePostTypes = [TypeConstants.PEOPLE_GROUP];
+  const corePostTypes = [TypeConstants.CONTACT, TypeConstants.GROUP];
+  const filteredCustomPostTypes = availablePostTypes?.filter(
+    (postType) =>
+      !corePostTypes.includes(postType) && !ignorePostTypes.includes(postType)
+  );
   return {
     customPostTypes: filteredCustomPostTypes,
   };

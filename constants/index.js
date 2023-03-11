@@ -1,3 +1,5 @@
+import Constants from "expo-constants";
+
 import {
   primaryBrand,
   secondaryBrand,
@@ -29,18 +31,18 @@ import {
   facebook,
   whatsapp,
   primaryDark,
-  primaryLight, 
+  primaryLight,
   secondaryDark,
-  secondaryLight, 
-  tertiaryDark, 
+  secondaryLight,
+  tertiaryDark,
   tertiaryLight,
   errorDark,
-  errorLight, 
-  warningDark, 
-  warningLight, 
-  infoDark, 
-  infoLight, 
-  successLight, 
+  errorLight,
+  warningDark,
+  warningLight,
+  infoDark,
+  infoLight,
+  successLight,
   successDark,
 } from "constants/colors";
 
@@ -72,6 +74,7 @@ export const ChurchHealthConstants = Object.freeze({
 export const AppConstants = Object.freeze({
   NAME: "D.T",
   PROTOCOL: "https",
+  CONTENT_TYPE_JSON: "application/json",
   TIMEOUT: 15000, // 15 secs
   REFRESH_INTERVAL: 0, //10 secs
 });
@@ -91,7 +94,11 @@ export const HTTP = Object.freeze({
 });
 
 export const FieldConstants = Object.freeze({
-  TMP_KEY_PREFIX: "tmp_",
+  TMP_ID_PREFIX: "tmp_",
+});
+
+export const FieldDefaultValues = Object.freeze({
+  COMMUNICATION_CHANNEL: { value: "" },
 });
 
 export const FieldTypes = Object.freeze({
@@ -115,15 +122,28 @@ export const FieldTypes = Object.freeze({
 });
 
 export const FieldNames = Object.freeze({
+  ID: "ID",
+  POST_TITLE: "post_title",
+  POST_TYPE: "post_type",
+  POST_DATE: "post_date",
+  LAST_MODIFIED: "last_modified",
+  TITLE: "title",
   NAME: "name",
+  NICKNAME: "nickname",
   OVERALL_STATUS: "overall_status",
+  REASON_CLOSED: "reason_closed",
+  REASON_PAUSED: "reason_paused",
+  REASON_UNASSIGNABLE: "reason_unassignable",
   GROUP_STATUS: "group_status",
+  GROUP_TYPE: "group_type",
   COACHES: "coaches",
   PARENT_GROUPS: "parent_groups",
   PEER_GROUPS: "peer_groups",
   CHILD_GROUPS: "child_groups",
   PEOPLE_GROUPS: "people_groups",
   BAPTISM_DATE: "baptism_date",
+  DATE_OF_BIRTH: "dob",
+  LEADERS: "leaders",
   MEMBER_COUNT: "member_count",
   MEMBERS: "members",
   GROUPS: "groups",
@@ -131,7 +151,26 @@ export const FieldNames = Object.freeze({
   LOCATION_GRID_META: "location_grid_meta",
   LOCATION_GRID: "location_grid",
   FAITH_MILESTONES: "milestones",
-  CHURCH_HEALTH: "health_metrics"
+  FAITH_STATUS: "faith_status",
+  CHURCH_HEALTH: "health_metrics",
+  INFLUENCE: "influence",
+  INFLUENCE_SLIDER: "influence_slider",
+  TYPE: "type",
+  SOURCES: "sources",
+  CONTACT_PHONE: "contact_phone",
+  CONTACT_EMAIL: "contact_email",
+  OFFLINE: "offline",
+});
+
+export const TileNames = Object.freeze({
+  STATUS: "status",
+  DETAILS: "details",
+  RELATIONSHIPS: "relationships",
+  HEALTH_METRICS: "health-metrics",
+  FAITH: "faith",
+  FOLLOWUP: "followup",
+  GROUPS: "groups",
+  OTHER: "other",
 });
 
 export const ThemeConstants = Object.freeze({
@@ -180,6 +219,7 @@ export const defaultThemeLight = Object.freeze({
   highlight,
   facebook,
   whatsapp,
+  sliderThumb: systemBlueDark,
 });
 
 export const defaultThemeDark = Object.freeze({
@@ -224,6 +264,7 @@ export const defaultThemeDark = Object.freeze({
   highlight,
   facebook,
   whatsapp,
+  sliderThumb: systemBlueDark,
 });
 
 // NOTE: lowercase constants bc used in D.T API requests
@@ -232,7 +273,8 @@ export const TypeConstants = Object.freeze({
   GROUP: "groups",
   NOTIFICATION: "notifications",
   TRAINING: "trainings",
-  PEOPLEGROUPS: "peoplegroups",
+  PEOPLE_GROUP: "peoplegroups",
+  MY_USER: "myuser",
 });
 
 export const SubTypeConstants = Object.freeze({
@@ -247,23 +289,33 @@ export const TabScreenConstants = Object.freeze({
   GROUPS: "GROUPS",
   NOTIFICATIONS: "NOTIFICATIONS",
   MORE: "MORE",
+  MY_USER: "MY_USER",
 });
 
 export const ScreenConstants = Object.freeze({
+  LAUNCH: "LAUNCH",
   LIST: "LIST",
   DETAILS: "DETAILS",
   CREATE: "CREATE",
   IMPORT: "IMPORT",
   COMMENTS_ACTIVITY: "COMMENTS_ACTIVITY",
+  MY_USER: "MY_USER",
   NOTIFICATIONS: "NOTIFICATIONS",
-  SETTINGS: "SETTINGS",
   PIN: "PIN",
+  ALL_ACTIVITY_LOGS: "ALL_ACTIVITY_LOGS",
+  STORAGE: "STORAGE",
 });
 
 export const NotificationActionConstants = Object.freeze({
   ALERT: "alert",
   COMMENT: "comment",
   MENTION: "mentioned",
+});
+
+export const NotificationPermissionConstants = Object.freeze({
+  GRANTED: "granted",
+  UNDETERMINED: "undetermined",
+  DENIED: "denied",
 });
 
 export const QuickActionButtonConstants = Object.freeze({
@@ -286,11 +338,47 @@ export const NetworkConstants = Object.freeze({
 });
 
 export const SortConstants = Object.freeze({
-  LAST_MOD_ASC: "-last_modified",
-  LAST_MOD_DESC: "last_modified",
-  CREATED_ASC: "-post_date",
-  CREATED_DESC: "post_date",
+  LAST_MOD_DESC: "-last_modified",
+  LAST_MOD_ASC: "last_modified",
+  CREATED_DESC: "-post_date",
+  CREATED_ASC: "post_date",
 });
+
+export const AppStateConstants = Object.freeze({
+  ACTIVE: "active",
+  BACKGROUND: "background",
+  INACTIVE: "inactive",
+});
+
+export const AuthConstants = Object.freeze({
+  ACCESS_TOKEN: "ACCESS_TOKEN",
+  BASE_URL: "BASE_URL",
+  USER: "USER",
+  CNONCE_PERSISTED: "cnonceLogin",
+  CNONCE: "CNONCE_LOGIN",
+  CNONCE_DATETIME: "CNONCE_LOGIN_DATETIME",
+  CNONCE_THRESHOLD: 2, // seconds
+});
+
+export const PINConstants = Object.freeze({
+  DISTRESS_CODE: "000000",
+  CODE: "CODE",
+  DELETE: "DELETE",
+  SCREEN: "PIN",
+  SET: "SET",
+  VALIDATE: "VALIDATE",
+  CNONCE_PERSISTED: "cnoncePIN",
+  CNONCE: "CNONCE_PIN",
+  CNONCE_DATETIME: "CNONCE_PIN_DATETIME",
+  CNONCE_THRESHOLD: 2, // seconds
+});
+
+export const CacheConstants = Object.freeze({
+  FILENAME: "cache.json",
+  INTERVAL: 1000 * 30, // 30 seconds
+});
+
+export const APP_VERSION = Constants.manifest.version;
 
 export default {
   STATUS_CIRCLE_SIZE: 15,

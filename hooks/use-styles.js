@@ -4,8 +4,6 @@ import useDevice from "hooks/use-device";
 import useI18N from "hooks/use-i18n";
 import useTheme from "hooks/use-theme";
 
-import Constants from "constants";
-
 const globalStyles = ({ theme, isRTL, isIOS }) => ({
   // Palette
   primary: {
@@ -47,7 +45,7 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
   },
   title: {
     color: theme.text.primary,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
     marginEnd: "auto",
   },
@@ -82,7 +80,7 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
   // Components
   container: (tabBarHeight) => ({
     backgroundColor: theme.background.primary,
-    marginBottom: isIOS ? tabBarHeight * 1.5 : tabBarHeight * 2.5, // ? tabBarHeight + Constants.LIST_ITEM_HEIGHT : null,
+    //marginBottom: isIOS ? tabBarHeight * 1.5 : tabBarHeight * 2.5, // ? tabBarHeight + Constants.LIST_ITEM_HEIGHT : null,
   }),
   screenContainer: {
     backgroundColor: theme.surface.primary,
@@ -90,7 +88,7 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
     height: "100%",
   },
   screenGutter: {
-    paddingBottom: 100
+    paddingBottom: 100,
   },
   rowContainer: {
     // NOTE: now handled automatically by I18nManager.isRTL
@@ -143,6 +141,13 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
   },
   activityIndicator: {
     color: theme.text.primary,
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: "50%",
+    alignItems: "center",
+    justifyContent: "center",
   },
   refreshControl: {
     color: theme.placeholder,
@@ -150,6 +155,7 @@ const globalStyles = ({ theme, isRTL, isIOS }) => ({
 });
 
 const useStyles = (localStyles) => {
+  // TODO: refactor these hooks calls?
   const { theme } = useTheme();
   const { isRTL } = useI18N();
   const { isIOS } = useDevice();

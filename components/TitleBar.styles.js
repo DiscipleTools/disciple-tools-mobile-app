@@ -1,6 +1,6 @@
 export const localStyles = ({ theme, isRTL, isIOS }) => ({
   container: (border, center) => ({
-    alignItems: "center", 
+    alignItems: "center",
     borderBottomWidth: border ? 1 : null,
     borderBottomColor: border ? theme.surface.primary : null,
     paddingBottom: 10,

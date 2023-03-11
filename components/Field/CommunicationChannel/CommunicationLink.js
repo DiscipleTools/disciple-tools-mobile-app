@@ -1,60 +1,45 @@
-import React from "react";
 import { Linking, Pressable, Text, View } from "react-native";
 
 import useStyles from "hooks/use-styles";
 
+import { isValidEmail, isValidPhone, isValidURL } from "utils";
+
 import { localStyles } from "./CommunicationLink.styles";
 
-const CommunicationLink = ({ key, value, fieldName }) => {
+const getProtocolByFieldName = ({ fieldName }) => {
+  if (!fieldName) return null;
+  if (fieldName.includes("phone")) return "tel:";
+  if (fieldName.includes("email")) return "mailto:";
+  return null;
+};
 
-  const { styles, globalStyles } = useStyles(localStyles);
+const getProtocol = ({ fieldName, key, value }) => {
+  if (isValidEmail({ value })) return "mailto:";
+  // be lenient with phone numbers and let the phone app handle it
+  if (typeof key === "string" && key?.toLowerCase()?.includes("phone"))
+    return "tel:";
+  if (isValidPhone({ value })) return "tel:";
+  if (isValidURL({ value })) {
+    if (!value.includes("http")) return "https://";
+    return "";
+  }
+  return getProtocolByFieldName({ fieldName });
+};
 
-  const isValidPhone = (fieldName) => {
-    // TODO: phone regex
-    return fieldName?.includes("phone");
-  };
+const CommunicationLink = ({ fieldName, entryKey, value }) => {
+  const { styles } = useStyles(localStyles);
 
-  const isValidEmail = (fieldName) => {
-    // TODO: email regex
-    return fieldName?.includes("email");
-  };
-
-  const isValidHttp = (value) => {
-    const lowerCaseValue = value?.toLowerCase();
-    return lowerCaseValue?.includes("http");
-  };
-
-  const isValidTLD = (value) => {
-    const lowerCaseValue = value?.toLowerCase();
-    return (
-      lowerCaseValue?.includes(".com") ||
-      lowerCaseValue?.includes(".net") ||
-      lowerCaseValue?.includes(".org") ||
-      lowerCaseValue?.includes(".me")
-    );
-  };
-
-  const isValidURL = (value) => {
-    // TODO: URL regex
-    return (
-      isValidHttp(value) ||
-      isValidTLD(value)
-    );
-  };
-
-  const getProtocol = (fieldName, value) => {
-    if (isValidPhone(fieldName)) return "tel:";
-    if (isValidEmail(fieldName)) return "mailto:";
-    if (isValidHttp(value)) return '';
-    return null;
-  };
-
-  let protocol = getProtocol(fieldName, value);
+  let protocol = getProtocol({ fieldName, key: entryKey, value });
   const url = `${protocol}${value}`;
-  return(
-    <Pressable key={key} onPress={() => { protocol ? Linking.openURL(url) : null }}>
+  const isLink = protocol !== null;
+  return (
+    <Pressable
+      onPress={() => {
+        isLink ? Linking.openURL(url) : null;
+      }}
+    >
       <View style={styles.container}>
-        <Text style={styles.linkingText}>
+        <Text style={isLink ? styles.linkingText : styles.unlinkingText}>
           {value}
         </Text>
       </View>

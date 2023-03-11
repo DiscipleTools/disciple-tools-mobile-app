@@ -1,30 +1,35 @@
-import * as RootNavigation from "navigation/RootNavigation";
-
+import useId from "hooks/use-id";
 import useType from "hooks/use-type";
 import useRequest from "hooks/use-request";
 
+import { getActivitiesURL } from "helpers/urls";
 import { searchObjList } from "utils";
 
 const useActivity = ({ search, filter, exclude }) => {
   const { isPost, postType } = useType();
-  const id = RootNavigation.getId();
-  const url = isPost ? `/dt-posts/v2/${postType}/${id}/activity` : null;
-  const { data, error, isLoading, isValidating, mutate } = useRequest({ url });
-  if (error || isLoading || !data?.activity) return {
-    data: [],
-    error,
-    isLoading,
-    isValidating,
-    mutate
+  const postId = useId();
+  const url = isPost ? getActivitiesURL({ postType, postId }) : null;
+  const request = {
+    url,
+    method: "GET",
   };
-  let filtered = data.activity?.filter(item => !exclude?.includes(item?.ID));
+  const { data, error, isValidating, mutate } = useRequest({ request });
+  if (error || !data?.activity)
+    return {
+      data: [],
+      error,
+      isLoading: !error && !data,
+      isValidating,
+      mutate,
+    };
+  let filtered = data.activity?.filter((item) => !exclude?.includes(item?.ID));
   if (search) filtered = searchObjList(filtered, search);
   return {
     data: filtered,
     error: null,
     isLoading: null,
     isValidating: null,
-    mutate
+    mutate,
   };
 };
 export default useActivity;

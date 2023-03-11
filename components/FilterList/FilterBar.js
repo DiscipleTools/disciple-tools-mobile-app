@@ -6,21 +6,32 @@ import FilterOptions from "./FilterOptions";
 
 import useFilters from "hooks/use-filters";
 import useI18N from "hooks/use-i18n";
-import useType from "hooks/use-type";
+import useSettings from "hooks/use-settings";
 import useStyles from "hooks/use-styles";
+import useType from "hooks/use-type";
 
 import { findFilterById } from "utils";
+
+import { SortConstants } from "constants";
 
 import { localStyles } from "./FilterBar.styles";
 
 const FilterBar = ({ display, items, defaultFilter, filter, onFilter }) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  const { i18n } = useI18N();
+  const { i18n, numberFormat } = useI18N();
   const { isNotification, isCommentsActivity } = useType();
   const { data: filters } = useFilters();
+  const { settings } = useSettings();
+
+  // TODO: default to English in this way?
+  const lastModifiedDateLabel =
+    settings?.fields?.last_modified?.name ?? "Last Modified Date";
+  const createdDateLabel = settings?.fields?.post_date?.name ?? "Created Date";
 
   const Count = () => (
-    <Text style={[globalStyles.text, styles.count]}>{items?.length}</Text>
+    <Text style={[globalStyles.text, styles.count]}>
+      {numberFormat(items?.length)}
+    </Text>
   );
 
   /*
@@ -37,7 +48,8 @@ const FilterBar = ({ display, items, defaultFilter, filter, onFilter }) => {
       defaultFilter?.query ||
       isNotification ||
       isCommentsActivity
-    ) return;
+    )
+      return;
     if (filter?.ID || defaultFilter?.ID) {
       if (!filters) return;
       const foundFilter = findFilterById(
@@ -49,7 +61,24 @@ const FilterBar = ({ display, items, defaultFilter, filter, onFilter }) => {
     return;
   }, [filter]);
 
+  const mapSortKey = (sortKey) => {
+    if (SortConstants.LAST_MOD_DESC === sortKey) {
+      return `${lastModifiedDateLabel} (${i18n.t("global.newest")})`;
+    }
+    if (SortConstants.LAST_MOD_ASC === sortKey) {
+      return `${lastModifiedDateLabel} (${i18n.t("global.oldest")})`;
+    }
+    if (SortConstants.CREATED_DESC === sortKey) {
+      return `${createdDateLabel} (${i18n.t("global.newest")})`;
+    }
+    if (SortConstants.CREATED_ASC === sortKey) {
+      return `${createdDateLabel} (${i18n.t("global.oldest")})`;
+    }
+    return sortKey;
+  };
+
   if (!filter) return null;
+  const filterName = filter?.name !== "" ? filter.name : null;
   return (
     <View style={styles.filtersScrollContainer}>
       <ScrollView
@@ -70,15 +99,13 @@ const FilterBar = ({ display, items, defaultFilter, filter, onFilter }) => {
         <View style={[globalStyles.rowContainer, styles.displayContainer]}>
           <Count />
           <View>
-            {filter?.name && (
-              <Text style={styles.filterSelections}>
-                {i18n.t("global.filter")}: {filter.name}
-              </Text>
-            )}
+            <Text style={styles.filterSelections}>
+              {i18n.t("global.filter")}: {filterName}
+            </Text>
             {filter?.query?.sort && (
               <Text style={styles.filterSelections}>
                 {" "}
-                {i18n.t("global.sort")}: {filter.query.sort}
+                {i18n.t("global.sort")}: {mapSortKey(filter.query.sort)}
               </Text>
             )}
           </View>

@@ -8,7 +8,7 @@ import { localStyles } from "./FieldSkeleton.styles";
 
 const FieldSkeleton = ({ isRTL, windowWidth }) => {
   const { styles, globalStyles } = useStyles(localStyles);
-  return(
+  return (
     <ContentLoader
       rtl={isRTL}
       speed={1}
@@ -17,7 +17,7 @@ const FieldSkeleton = ({ isRTL, windowWidth }) => {
       backgroundColor={styles.skeletonBackground.backgroundColor}
       foregroundColor={styles.skeletonForeground.backgroundColor}
     >
-      <Rect x="0" y="0" rx="5" ry="5" width={windowWidth-10} height="50" />
+      <Rect x="0" y="0" rx="5" ry="5" width={windowWidth - 10} height="50" />
     </ContentLoader>
   );
 };

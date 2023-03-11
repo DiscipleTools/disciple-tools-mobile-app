@@ -1,11 +1,21 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   toggleAutoLogin as _toggleAutoLogin,
   toggleRememberLoginDetails as _toggleRememberLoginDetails,
+  clearFormFields as _clearFormFields,
+  setFormField,
 } from "store/actions/auth.actions";
 
-import useNetwork from "hooks/use-network";
+import useCache from "hooks/use-cache";
+import useCNonce from "hooks/use-cnonce";
 import useI18N from "hooks/use-i18n";
 import useSecureStore from "hooks/use-secure-store";
 
@@ -13,160 +23,226 @@ import axios from "services/axios";
 
 import jwt_decode from "jwt-decode";
 
-const AuthConstants = {
-  ACCESS_TOKEN: "ACCESS_TOKEN",
-  BASE_URL: "BASE_URL",
-  USER: "USER",
-};
-
-// TODO: load protocol from .env
-const PROTOCOL = "https";
+import { AppConstants, AuthConstants } from "constants";
 
 const AuthContext = createContext(null);
 
-const AuthProvider = ({ children }) => {
+const AuthProvider = React.memo(({ children }) => {
   const auth = useCustomAuth();
-  return (
-    <AuthContext.Provider value={auth}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
+});
 
 const useAuth = () => useContext(AuthContext);
 
 const useCustomAuth = () => {
-
   const { setLocale } = useI18N();
 
-  // TODO: validate "iss" === domain
-  const validateToken = (token) => {
+  const [authenticated, setAuthenticated] = useState(false);
+  const [accessToken, setAccessToken] = useState(null);
+  const [baseUrl, setBaseUrl] = useState(null);
+  const [user, setUser] = useState(null);
+
+  const dispatch = useDispatch();
+
+  const isAutoLogin = useSelector((state) => state?.authReducer?.isAutoLogin);
+  const rememberLoginDetails = useSelector(
+    (state) => state?.authReducer?.rememberLoginDetails
+  );
+
+  const clearFormFields = useCallback(() => {
+    dispatch(_clearFormFields());
+    return;
+  }, []);
+
+  useEffect(() => {
+    if (!rememberLoginDetails) {
+      clearFormFields();
+    } else if (rememberLoginDetails && user) {
+      dispatch(setFormField({ key: "domain", value: user?.domain }));
+      dispatch(setFormField({ key: "username", value: user?.username }));
+    }
+  }, [rememberLoginDetails, user]);
+
+  const { getSecureItem, setSecureItem, deleteSecureItem } = useSecureStore();
+
+  const { clearCache } = useCache();
+
+  const { setCNonce, validateCNonce } = useCNonce({
+    persistedKey: AuthConstants.CNONCE_PERSISTED,
+    cnonceKey: AuthConstants.CNONCE,
+    cnonceDTKey: AuthConstants.CNONCE_DATETIME,
+    threshold: AuthConstants.CNONCE_THRESHOLD,
+  });
+
+  const validateToken = useCallback((token, baseUrl) => {
     const payload = jwt_decode(token);
+    //if (domain !== payload.iss) return false;
+    if (!baseUrl?.includes(payload.iss)) {
+      return false;
+    }
     let exp = payload.exp;
     if (exp < 10000000000) exp *= 1000;
     const now = Date.now();
     if (now <= exp) return true;
     return false;
-  };
+  }, []);
 
-  const decodeToken = (token) => {
+  const decodeToken = useCallback((token) => {
     try {
       return jwt_decode(token);
     } catch (error) {
       return null;
+    }
+  }, []);
+
+  // rehydrate state from secure storage
+  useEffect(() => {
+    if (!accessToken || !baseUrl || !user) {
+      (async () => {
+        // rehydrate user
+        if (!user) {
+          try {
+            const rehydratedUser = JSON.parse(
+              await getSecureItem(AuthConstants.USER)
+            );
+            setUser(rehydratedUser);
+          } catch (error) {
+            console.error(error);
+          }
+        };
+        // rehydrate baseUrl
+        if (!baseUrl) {
+          const rehydratedBaseUrl = await getSecureItem(AuthConstants.BASE_URL);
+          setBaseUrl(rehydratedBaseUrl);
+        };
+        // rehydrate access token
+        if (!accessToken) {
+          const rehydratedAccessToken = await getSecureItem(
+            AuthConstants.ACCESS_TOKEN
+          );
+          setAccessToken(rehydratedAccessToken);
+        };
+      })();
+      return;
     };
-  };
+    (async () => {
+      // if auto-login enabled, then proceeed, otherwise validate login cnonce
+      if (isAutoLogin) {
+        setAuthenticated(true);
+      } else {
+        const validatedLogin = await validateCNonce();
+        setAuthenticated(validatedLogin);
+      };
+    })();
+    return;
+  }, [accessToken, baseUrl, user?.id]);
 
-  const [accessToken, setAccessToken] = useState(null);
-  const [baseUrl, setBaseUrl] = useState(null);
-  const [user, setUser] = useState(null);
-  const [authenticated, setAuthenticated] = useState(false);
-
-  const dispatch = useDispatch();
-
-  // NOTE: Redux already does a good job indicating whether to rehydrate state, so use that
-  const rehydrate = useSelector(state => state?.authReducer?.rehydrate);
-  const isAutoLogin = useSelector(state => state?.authReducer?.isAutoLogin);
-  const rememberLoginDetails = useSelector(state => state?.authReducer?.rememberLoginDetails);
-
-  const { isConnected } = useNetwork();
-  const { getSecureItem, setSecureItem, deleteSecureItem } = useSecureStore();
-
-  // rehydrate state from secure storage (depends on Redux to notify via "rehydrate" change)
-  useEffect(async() => {
-    /*
-    if auto-login, but accessToken is missing or invalid, 
-    then attempt to rehydrate accessToken from secure storage
-    else do nothing bc user will be prompted to re-login
-    */
-    if (isAutoLogin && (!accessToken || (accessToken && !validateToken(accessToken)))) {
-      // rehydrate access token
-      const rehydratedAccessToken = await getSecureItem(AuthConstants.ACCESS_TOKEN);
-      //console.log(`~~~~~~~~~~ rehydratedAccessToken: ${rehydratedAccessToken}`);
-      if (validateToken(rehydratedAccessToken)) setAccessToken(rehydratedAccessToken);
-    };
-    // rehydrate baseUrl
-    const rehydratedBaseUrl = baseUrl ?? (await getSecureItem(AuthConstants.BASE_URL));
-    //console.log(`~~~~~~~~~~ rehydratedBaseUrl: ${rehydratedBaseUrl}`);
-    setBaseUrl(rehydratedBaseUrl);
-    // rehydrate user
-    try {
-      const rehydratedUser = user ?? JSON.parse((await getSecureItem(AuthConstants.USER)));
-      //console.log(`~~~~~~~~~~ rehydratedUser: ${JSON.stringify(rehydratedUser)}`);
-      // TODO: if user unable to be rehydrated AND have valid accessToken and baseUrl, then request user info
-      setUser(rehydratedUser);
-    } catch (error) {
-      setUser(null);
-    };
-  }, [rehydrate]);
-
-  // when "accessToken" changes, validate it:
-  // if valid, configure axios interceptors and setAuthenticated(true)
-  // else setAuthenticated(false)
-  useEffect(async() => {
-    if (accessToken && validateToken(accessToken)) {
-      // Add a request interceptor
-      axios.interceptors.request.use(
-        config => {
-          if (accessToken && accessToken !== config.headers?.Authorization) {
-            config.headers["Authorization"] = `Bearer ${accessToken}`;
-          } else {
-            delete config.headers["Authorization"];
-            setAuthenticated(false);
-          };
-          return config;
-        },
-        error => error
-      );
-      // Add a response interceptor
-      axios.interceptors.response.use(
-        response => response,
-        async(error) => {
-          if (error?.response?.status === 401) {
-            setAuthenticated(false);
-          };
-          return Promise.reject(error);
+  // auto-logout on any 401 - Unauthorized
+  useEffect(() => {
+    // add a response interceptor
+    const responseInterceptor = axios.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        console.error(error);
+        if (error?.response?.status === 401) {
+          setAuthenticated(false);
         }
-      );
-      setAuthenticated(true);
-    } else {
-      setAuthenticated(false);
+        return Promise.reject(error);
+      }
+    );
+    return () => {
+      if (responseInterceptor) {
+        axios.interceptors.request.eject(responseInterceptor);
+      }
     };
-  }, [accessToken]);
+  }, []);
 
   // when baseUrl changes, set axios default baseURL (if applicable)
-  useEffect(async() => {
-    if (baseUrl) {
-      if (baseUrl !== axios.defaults.baseURL) axios.defaults.baseURL = baseUrl;
-    } else {
-      setAuthenticated(false);
-    };
+  // clear cache and storage when switching D.T instances
+  useEffect(() => {
+    if (baseUrl && baseUrl !== axios.defaults.baseURL) {
+      axios.defaults.baseURL = baseUrl;
+      //clearStorage();
+      clearCache();
+    }
     return;
   }, [baseUrl]);
 
-  const toggleAutoLogin = () => dispatch(_toggleAutoLogin());
-  const toggleRememberLoginDetails = () =>
+  // clear cache and storage when switching user accounts within same instance
+  useEffect(() => {
+    //clearStorage();
+    clearCache();
+    return;
+  }, [user?.id]);
+
+  /*
+   * When "accessToken" changes, validate it.
+   * If valid, configure axios request interceptor and validate login cnonce
+   */
+  useEffect(() => {
+    let requestInterceptor = null;
+    (async () => {
+      if (accessToken && validateToken(accessToken, baseUrl)) {
+        // eject any previous request interceptors
+        for (
+          let ii = 0;
+          ii < axios.interceptors.request.handlers?.length;
+          ii++
+        ) {
+          axios.interceptors.request.eject(ii);
+        }
+        // add a request interceptor
+        requestInterceptor = axios.interceptors.request.use(
+          (config) => {
+            config.headers["Authorization"] = `Bearer ${accessToken}`;
+            return config;
+          },
+          (error) => error
+        );
+      };
+    })();
+    return () => {
+      if (requestInterceptor) {
+        axios.interceptors.request.eject(requestInterceptor);
+      }
+    };
+  }, [accessToken]);
+
+  const toggleAutoLogin = useCallback(async () => {
+    dispatch(_toggleAutoLogin());
+    return;
+  }, []);
+
+  const toggleRememberLoginDetails = useCallback(() => {
     dispatch(_toggleRememberLoginDetails());
+    return;
+  }, []);
+
+  const modifyUser = useCallback(async ({ key, value }) => {
+    setUser((prev) => ({ ...prev, [key]: value }));
+  }, []);
 
   // set persisted secure storage values (if applicable per user options)
-  const setPersistedAuth = async (accessToken, baseUrl, user) => {
-    try {
-      //if (isAutoLogin) await setSecureItem(AuthConstants.ACCESS_TOKEN, accessToken);
-      await setSecureItem(AuthConstants.ACCESS_TOKEN, accessToken);
-      await setSecureItem(AuthConstants.BASE_URL, baseUrl);
-      //if (rememberLoginDetails) await setSecureItem(AuthConstants.USER, JSON.stringify(user));
-      await setSecureItem(AuthConstants.USER, JSON.stringify(user));
-    } catch (error) {
-      // TODO:
-      console.error(error);
-    };
-  };
+  const setPersistedAuth = useCallback(
+    async (accessToken, baseUrl, user) => {
+      try {
+        await setSecureItem(AuthConstants.ACCESS_TOKEN, accessToken);
+        await setSecureItem(AuthConstants.BASE_URL, baseUrl);
+        //if (rememberLoginDetails) await setSecureItem(AuthConstants.USER, JSON.stringify(user));
+        await setSecureItem(AuthConstants.USER, JSON.stringify(user));
+      } catch (error) {
+        // TODO:
+        console.error(error);
+      }
+    },
+    [accessToken, baseUrl, user?.id]
+  );
 
   // TODO: implement timeout
-  const signIn = async (domain, username, password) => {
+  const signIn = useCallback(async (domain, username, password) => {
     // TODO: handle offline
     try {
-      const baseUrl = `${PROTOCOL}://${domain}/wp-json`;
+      const baseUrl = `${AppConstants.PROTOCOL}://${domain}/wp-json`;
       const url = `${baseUrl}/jwt-auth/v1/token`;
       const res = await axios({
         url,
@@ -176,7 +252,6 @@ const useCustomAuth = () => {
           password,
         },
       });
-      console.log(res?.data);
       if (res?.status === 200 && res?.data?.token) {
         const accessToken = res.data.token;
         const id = decodeToken(accessToken)?.data?.user?.id;
@@ -188,51 +263,111 @@ const useCustomAuth = () => {
           email: res.data?.user_email,
           nicename: res.data?.user_nicename,
         };
+        // set login cnonce
+        await setCNonce();
         // set persisted storage values
         await setPersistedAuth(accessToken, baseUrl, user);
         // sync local locale with server
-        if (res.data?.locale) setLocale(res.data.locale);
+        if (res.data?.locale) {
+          setLocale(res.data.locale);
+        }
         // set in-memory provider value
-        setAccessToken(accessToken);
-        setBaseUrl(baseUrl);
+        // NOTE: order matters here (per hook ordering)!
+        clearFormFields();
         setUser(user);
+        setBaseUrl(baseUrl);
+        setAccessToken(accessToken);
+        setAuthenticated(true);
         return;
       }
     } catch (error) {
       throw new Error(error);
-    };
-  };
+    }
+  }, []);
 
-  const signOut = async () => {
+  // TODO: remove when switch to web-based OAuth2 login
+  // used by ValidateOtpScreen
+  const persistUser = useCallback(async (domain, username, data) => {
+    const accessToken = data.token;
+    const id = decodeToken(accessToken)?.data?.user?.id;
+    const user = {
+      id,
+      username,
+      domain,
+      display_name: data?.user_display_name,
+      email: data?.user_email,
+      nicename: data?.user_nicename,
+    };
+    // set persisted storage values
+    await setPersistedAuth(accessToken, data.baseUrl, user);
+    // sync local locale with server
+    if (data?.locale) setLocale(data.locale);
+    // set in-memory provider value
+    // NOTE: order matters here (per hook ordering)!
+    setUser(user);
+    setBaseUrl(data.baseUrl);
+    setAccessToken(accessToken);
+    return;
+  }, []);
+
+  const signOut = useCallback(async () => {
     try {
-      // TODO: delete PIN related values
-      //await deleteSecureItem(PINConstants.CNONCE);
-      //await deleteSecureItem(PINConstants.CODE);
       await deleteSecureItem(AuthConstants.ACCESS_TOKEN);
       await deleteSecureItem(AuthConstants.BASE_URL);
-      await deleteSecureItem(AuthConstants.USER);
+      //await deleteSecureItem(AuthConstants.USER);
+      if (!rememberLoginDetails) await deleteSecureItem(AuthConstants.USER);
     } catch (error) {
       console.warn(error);
     } finally {
       // disable "auto login" and "remember login details" on signOut
-      if (isAutoLogin) toggleAutoLogin();
-      if (rememberLoginDetails) toggleRememberLoginDetails();
+      // if (isAutoLogin) toggleAutoLogin();
       // nullify in-memory auth provider values
-      setAccessToken(null);
+      if (!rememberLoginDetails) setUser(null);
       setBaseUrl(null);
-      setUser(null);
+      setAccessToken(null);
+      setAuthenticated(false);
     }
-  };
+  }, []);
 
   return {
     authenticated,
+    accessToken,
+    baseUrl,
     user,
+    persistUser,
     isAutoLogin,
     toggleAutoLogin,
     rememberLoginDetails,
     toggleRememberLoginDetails,
+    modifyUser,
     signIn,
     signOut,
   };
+
+  /*
+  return useMemo(
+    () => ({
+      authenticated,
+      accessToken,
+      user,
+      persistUser,
+      isAutoLogin,
+      toggleAutoLogin,
+      rememberLoginDetails,
+      toggleRememberLoginDetails,
+      modifyUser,
+      signIn,
+      signOut,
+    }),
+    [
+      authenticated,
+      user?.id,
+      user?.domain,
+      user?.username,
+      isAutoLogin,
+      rememberLoginDetails,
+    ]
+  );
+  */
 };
 export { useAuth, AuthProvider };
