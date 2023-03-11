@@ -245,8 +245,8 @@ const DetailsScreen = ({ navigation, route }) => {
       <OfflineBar />
       <TitleBar center title={postName} style={styles.titleBar} />
       <TabView
-        lazy
-        renderLazyPlaceholder={() => <PostSkeleton />}
+        //       lazy
+        //       renderLazyPlaceholder={() => <PostSkeleton />}
         keyboardDismissMode="auto"
         navigationState={{ index, routes }}
         renderScene={renderScene}
