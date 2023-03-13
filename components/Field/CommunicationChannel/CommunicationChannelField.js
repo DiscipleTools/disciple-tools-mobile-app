@@ -179,7 +179,6 @@ const CommunicationChannelFieldEdit = ({
     }
     // in-memory cache (and persisted storage) state
     const cachedData = cache.get(cacheKey);
-    if (!cachedData?.[fieldKey]) return;
     cachedData[fieldKey] = componentData;
     mutate(cacheKey, cachedData);
     // remote API state
