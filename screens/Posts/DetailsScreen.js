@@ -37,7 +37,12 @@ import useToast from "hooks/use-toast";
 
 import { getSharesURL } from "helpers/urls";
 
-import { ScreenConstants, SubTypeConstants, TileNames } from "constants";
+import {
+  ScreenConstants,
+  TypeConstants,
+  SubTypeConstants,
+  TileNames,
+} from "constants";
 
 import { localStyles } from "./DetailsScreen.styles";
 import { FieldNames } from "constants";
@@ -268,7 +273,7 @@ const DetailsScreen = ({ navigation, route }) => {
         )}
         style={globalStyles.surface}
       />
-      <PostFAB />
+      {postType === TypeConstants.CONTACT && <PostFAB />}
     </>
   );
 };
