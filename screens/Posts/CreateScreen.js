@@ -52,11 +52,13 @@ const filterEmptyFields = ({ post }) => {
     Object.entries(post).filter(([_, val]) => {
       if (Array.isArray(val)) {
         if (
-          val.length === 1 && (
-            (val[0]?.value === null || val[0]?.value === "") ||
-            (val[0]?.key === null || val[0]?.key === "") ||
-            (val[0]?.id === null || val[0]?.id === "")
-          )
+          val.length === 1 &&
+          (val[0]?.value === null ||
+            val[0]?.value === "" ||
+            val[0]?.key === null ||
+            val[0]?.key === "" ||
+            val[0]?.id === null ||
+            val[0]?.id === "")
         ) {
           return false;
         }
@@ -85,11 +87,15 @@ const mapToAPI = ({ post }) => {
   for (const [key, val] of Object.entries(post)) {
     if (val?.key) {
       mappedPost[key] = val.key;
-    };
+    }
     if (Array.isArray(val)) {
-      mappedPost[key] = { values: val.map(item => ({ value: item?.key || item?.value || item?.id || "" })) };
-    };
-  };
+      mappedPost[key] = {
+        values: val.map((item) => ({
+          value: item?.key || item?.value || item?.id || "",
+        })),
+      };
+    }
+  }
   return mappedPost;
 };
 
@@ -235,7 +241,7 @@ const CreateScreen = ({ navigation, route }) => {
     if (!isConnected) {
       post[FieldNames.ID] = tmpId;
       post[FieldNames.OFFLINE] = true;
-    };
+    }
     const apiPost = mapToAPI({ post });
     const res = await createPost({ data: apiPost });
     if (isConnected && res?.ID) {
@@ -295,7 +301,8 @@ const CreateScreen = ({ navigation, route }) => {
       {creationFields?.map(([key, field], _idx) => (
         <Field
           key={key}
-          editing
+          // this is necessary bc the Android DatePicker will auto-launch
+          editing={field?.type !== FieldTypes.DATE}
           fieldKey={key}
           field={field}
           post={postRef.current}
