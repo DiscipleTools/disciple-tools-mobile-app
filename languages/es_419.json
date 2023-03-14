@@ -85,6 +85,16 @@
         "url": "URL",
         "user": "Mi usuario",
         "username": "Nombre de usuario",
-        "viewOnWeb": "Ver en la Web"
+        "viewOnWeb": "Ver en la Web",
+        "launchCard": {
+            "title": "Cargando datos para uso cuando esta desconectado",
+            "body": "Descarga de Favoritos y registros modificados recientemente (para usar sin conexión)"
+        },
+        "usage": "Uso",
+        "downloadData": "Descargar datos",
+        "clearStorage": "Vaciar Almacenamiento",
+        "pending": "Esperando a ser aceptado",
+        "clearStorageNote": "¡Advertencia! Si está desconectado y vacía el almacenamiento, entonces no podrá acceder a sus datos hasta que vuelva a estar en línea y se actualice.",
+        "downloadDataNote": "Esta acción causará que la aplicación obtenga y almacene todos los datos posibles (incluidos todos los contactos, grupos, sus comentarios asociados, ubicaciones, grupos de personas, etc.). Dependiendo del uso de su equipo, esto puede ser varios MB de datos y hacer que la aplicación se ejecute lentamente. (De manera predeterminada, descargamos solo los favoritos y sus datos asociados. Cualquier otro datos *accedido* mientras está en línea también está almacenado y disponible para uso sin conexión, a menos que se elimine)."
     }
 }

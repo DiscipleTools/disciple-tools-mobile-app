@@ -40,7 +40,7 @@
         "login": "Connexion",
         "logout": "Se déconnecter",
         "members": "Membres",
-        "mention": "Mention",
+        "mention": "Mentionner",
         "more": "Suite",
         "networkAvailable": "Réseau détecté. Retour au mode EN LIGNE",
         "networkUnavailable": "Réseau indisponible. Maintenant en mode HORS LIGNE",
@@ -85,6 +85,16 @@
         "favoriteContacts": "Contacts favoris",
         "favoriteGroups": "Groupes favoris",
         "otp": "OTP",
-        "storage": "Stockage"
+        "storage": "Stockage",
+        "launchCard": {
+            "title": "Chargement des données pour une utilisation hors ligne",
+            "body": "Prélèvement des favoris et des enregistrements récemment modifiés (pour une utilisation hors ligne)"
+        },
+        "pending": "En attente d'être accepté",
+        "downloadData": "Télécharger les données",
+        "clearStorage": "Effacer le stockage",
+        "clearStorageNote": "Avertissement ! Si vous êtes HORS LIGNE et que vous effacez le stockage, vous ne pourrez pas accéder à vos données jusqu'à ce que vous soyez de nouveau en ligne et qu'elles soient actualisées.",
+        "usage": "l' usage",
+        "downloadDataNote": "Cette action déclenchera l'application pour récupérer et stocker toutes les données possibles (y compris tous les contacts, groupes, leurs commentaires associés, emplacements, groupes de personnes, etc.). En fonction de l'utilisation de votre équipe, cela peut représenter plusieurs Mo de données et ralentir l'exécution de l'application. (Par défaut, nous téléchargeons uniquement les favoris et leurs données associées. Toutes les autres données *accessibles* en ligne sont également stockées et disponibles pour une utilisation hors ligne, sauf si elles sont supprimées)."
     }
 }
