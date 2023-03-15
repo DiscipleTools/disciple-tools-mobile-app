@@ -177,30 +177,18 @@ export const filterPosts = ({ posts, query }) => {
 };
 
 export const sortPosts = ({ posts, sortKey }) => {
-  if (!posts) return posts;
-  // TODO: constants
+  if (!posts || !sortKey) return posts;
+  const dateKeys = ["last_modified", "post_date"];
+  const isDescending = sortKey.startsWith("-");
+  const normalizedKey = isDescending ? sortKey.slice(1) : sortKey;
   return posts.sort((a, b) => {
-    if (!sortKey) sortKey = "-last_modified";
-    let sortDesc = sortKey?.startsWith("-");
-    if (sortDesc) sortKey = sortKey?.substring(1);
-    // necessary bc date fields have subfields (eg, "formatted" and "timestamp")
-    let secondarySortKey = null;
-    if (sortKey === "last_modified" || sortKey === "post_date") {
-      secondarySortKey = "timestamp"; //"formatted";
+    let comparison = 0;
+    if (dateKeys.includes(normalizedKey)) {
+      comparison = a[normalizedKey].timestamp - b[normalizedKey].timestamp;
+      return isDescending ? -comparison : comparison;
     }
-    if (a?.[sortKey]?.key) {
-      secondarySortKey = "key";
-    }
-    if (secondarySortKey !== null) {
-      if (a?.[sortKey]?.[secondarySortKey] < b?.[sortKey]?.[secondarySortKey])
-        return sortDesc ? 1 : -1;
-      if (a?.[sortKey]?.[secondarySortKey] > b?.[sortKey]?.[secondarySortKey])
-        return sortDesc ? -1 : 1;
-      return 0;
-    }
-    if (a?.[sortKey] < b?.[sortKey]) return sortDesc ? 1 : -1;
-    if (a?.[sortKey] > b?.[sortKey]) return sortDesc ? -1 : 1;
-    return 0;
+    comparison = a[normalizedKey] - b[normalizedKey];
+    return isDescending ? -comparison : comparison;
   });
 };
 
