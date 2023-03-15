@@ -1,6 +1,6 @@
 import "./wdyr";
 import React, { useEffect } from "react";
-import { LogBox, Platform, Text } from "react-native";
+import { LogBox, Platform, StatusBar, Text } from "react-native";
 
 import * as SplashScreen from "expo-splash-screen";
 
@@ -20,6 +20,7 @@ import { AuthProvider } from "hooks/use-auth";
 //import useApp from "hooks/use-app";
 import useAppState from "hooks/use-app-state";
 import useStyles from "hooks/use-styles";
+import useTheme from "hooks/use-theme";
 import { toastConfig } from "hooks/use-toast";
 
 //import { AppConstants } from "constants";
@@ -30,8 +31,20 @@ enableScreens();
 const StyledApp = () => {
   // set default text styles
   const { globalStyles } = useStyles();
+  const { isDarkMode } = useTheme();
   Text.defaultProps = Text.defaultProps || {};
   Text.defaultProps.style = { ...globalStyles.text };
+  const statusBarContent = isDarkMode ? "light-content" : "dark-content";
+  return (
+    <>
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle={statusBarContent}
+      />
+      <AppNavigator />
+    </>
+  );
   return <AppNavigator />;
 };
 
