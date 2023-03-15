@@ -7,7 +7,7 @@ import SortSheet from "components/Sheet/SortSheet";
 import useI18N from "hooks/use-i18n";
 import useStyles from "hooks/use-styles";
 
-const Sort = ({ items, setItems, filter, onFilter }) => {
+const Sort = ({ filter, onFilter }) => {
   const { globalStyles } = useStyles();
   const { i18n } = useI18N();
   // MODAL SHEET
@@ -27,12 +27,7 @@ const Sort = ({ items, setItems, filter, onFilter }) => {
         title={title}
         defaultIndex={defaultIndex}
       >
-        <SortSheet
-          items={items}
-          setItems={setItems}
-          filter={filter}
-          onFilter={onFilter}
-        />
+        <SortSheet filter={filter} onFilter={onFilter} />
       </ModalSheet>
     </>
   );

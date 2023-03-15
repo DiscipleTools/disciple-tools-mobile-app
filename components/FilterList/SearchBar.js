@@ -10,15 +10,7 @@ import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./SearchBar.styles";
 
-const SearchBar = ({
-  sortable,
-  items,
-  setItems,
-  search,
-  onSearch,
-  filter,
-  onFilter,
-}) => {
+const SearchBar = ({ sortable, search, onSearch, filter, onFilter }) => {
   const { styles, globalStyles } = useStyles(localStyles);
   const { i18n } = useI18N();
 
@@ -26,7 +18,13 @@ const SearchBar = ({
   const debouncedSearch = useDebounce(_search, 1000);
 
   useEffect(() => {
-    if (onSearch) onSearch(debouncedSearch.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+    if (onSearch)
+      onSearch(
+        debouncedSearch
+          .trim()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+      );
     Keyboard.dismiss();
     return;
   }, [debouncedSearch]);
@@ -57,12 +55,7 @@ const SearchBar = ({
         )}
         {sortable && (
           <View>
-            <Sort
-              items={items}
-              setItems={setItems}
-              filter={filter}
-              onFilter={onFilter}
-            />
+            <Sort filter={filter} onFilter={onFilter} />
           </View>
         )}
       </View>

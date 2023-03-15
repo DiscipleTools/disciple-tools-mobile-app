@@ -13,7 +13,7 @@ import useSettings from "hooks/use-settings";
 
 import { SortConstants } from "constants";
 
-const SortSheet = ({ items, setItems, filter, onFilter }) => {
+const SortSheet = ({ filter, onFilter }) => {
   const { i18n } = useI18N();
   const { settings } = useSettings();
 
@@ -61,37 +61,11 @@ const SortSheet = ({ items, setItems, filter, onFilter }) => {
     },
   ];
 
-  const getSortParams = (selectedKey) => {
-    switch (selectedKey) {
-      case SortConstants.LAST_MOD_ASC:
-        return { asc: true, sortKey: "last_modified" };
-      case SortConstants.LAST_MOD_DESC:
-        return { asc: false, sortKey: "last_modified" };
-      case SortConstants.CREATED_ASC:
-        return { asc: true, sortKey: "post_date" };
-      case SortConstants.CREATED_DESC:
-        return { asc: false, sortKey: "post_date" };
-      default:
-        return "last_modified";
-    }
-  };
-
-  const sort = (selectedKey) => {
-    const { asc, sortKey } = getSortParams(selectedKey);
-    const sortedItems = [...items].sort((a, b) =>
-      asc ? a[sortKey] - b[sortKey] : b[sortKey] - a[sortKey]
-    );
-    setItems(sortedItems);
-  };
-
   const onChange = (sortValue) => {
-    if (sortValue?.key) {
-      sort(sortValue.key);
-      if (filter?.query?.sort) {
-        const newFilter = filter;
-        newFilter.query.sort = sortValue.key;
-        onFilter(newFilter);
-      }
+    if (filter?.query?.sort) {
+      const newFilter = filter;
+      newFilter.query.sort = sortValue.key;
+      onFilter(newFilter);
     }
   };
   return <SelectSheet require sections={sections} onChange={onChange} />;

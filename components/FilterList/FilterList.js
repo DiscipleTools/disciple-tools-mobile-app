@@ -45,14 +45,6 @@ const FilterList = ({
 
   const [_refreshing, _setRefreshing] = useState(refreshing ?? false);
 
-  const [_items, setItems] = useState([]);
-
-  useEffect(() => {
-    if (items?.length !== _items?.length) {
-      setItems(items);
-    }
-  }, [items]);
-
   const _onRefresh = useCallback(() => {
     if (onRefresh) {
       onRefresh();
@@ -74,14 +66,12 @@ const FilterList = ({
   );
 
   // TODO: actual skeleton component for post lists
-  if (!_items) return <SafeAreaView style={styles.container} />;
+  if (!items) return <SafeAreaView style={styles.container} />;
   return (
     <View style={[styles.container, style]}>
       {onSearch && (
         <SearchBar
           sortable={sortable}
-          items={_items}
-          setItems={setItems}
           search={search}
           onSearch={onSearch}
           filter={filter}
@@ -91,7 +81,7 @@ const FilterList = ({
       {onFilter && (
         <FilterBar
           display={display}
-          items={_items}
+          items={items}
           defaultFilter={defaultFilter}
           filter={filter}
           onFilter={onFilter}
@@ -100,7 +90,7 @@ const FilterList = ({
       {isFlashList ? (
         <FlashList
           keyExtractor={keyExtractor}
-          data={_items}
+          data={items}
           renderItem={renderItem}
           ListEmptyComponent={<Placeholder placeholder={placeholder} />}
           refreshControl={
@@ -114,7 +104,7 @@ const FilterList = ({
       ) : (
         <FlatList
           keyExtractor={keyExtractor}
-          data={_items}
+          data={items}
           renderItem={renderItem}
           ListEmptyComponent={<Placeholder placeholder={placeholder} />}
           refreshControl={
