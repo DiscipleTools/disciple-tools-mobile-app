@@ -99,6 +99,7 @@ export const FieldConstants = Object.freeze({
 
 export const FieldDefaultValues = Object.freeze({
   COMMUNICATION_CHANNEL: { value: "" },
+  LOCATION_META: { value: "" },
 });
 
 export const FieldTypes = Object.freeze({

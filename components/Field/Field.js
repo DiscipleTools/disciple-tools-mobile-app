@@ -11,6 +11,7 @@ import ConnectionField from "components/Field/Connection/ConnectionField";
 import DateField from "components/Field/Date/DateField";
 import KeySelectField from "components/Field/KeySelect/KeySelectField";
 import LocationField from "components/Field/Location/LocationField";
+import LocationMetaField from "components/Field/Location/LocationMetaField";
 import MultiSelectField from "components/Field/MultiSelect/MultiSelectField";
 import NumberField from "components/Field/Number/NumberField";
 import TagsField from "components/Field/Tags/TagsField";
@@ -90,21 +91,14 @@ const Field = ({
   // TODO: comments
   const isUncontrolledField = () => {
     if (
-      (
-        fieldType === FieldTypes.CONNECTION &&
-        isGroupField
-      ) ||
-      (
-        fieldType === FieldTypes.MULTI_SELECT &&
-        fieldName === FieldNames.CHURCH_HEALTH
-      ) ||
-      (
-        fieldType === FieldTypes.COMMUNICATION_CHANNEL &&
-        !onChange
-      )
+      (fieldType === FieldTypes.CONNECTION && isGroupField) ||
+      (fieldType === FieldTypes.MULTI_SELECT &&
+        fieldName === FieldNames.CHURCH_HEALTH) ||
+      (fieldType === FieldTypes.COMMUNICATION_CHANNEL && !onChange) ||
+      (fieldType === FieldTypes.LOCATION_META && !onChange)
     ) {
       return false;
-    };
+    }
     return true;
   };
 
@@ -184,8 +178,17 @@ const Field = ({
           />
         );
       case FieldTypes.LOCATION_META:
-        // TODO: support?
-        return null;
+        return (
+          <LocationMetaField
+            editing={_editing}
+            cacheKey={cacheKey}
+            fieldKey={fieldKey}
+            field={field}
+            values={_value}
+            onChange={onChange}
+            onRemove={onRemove}
+          />
+        );
       case FieldTypes.LOCATION:
         return (
           <LocationField

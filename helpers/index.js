@@ -428,3 +428,11 @@ export const getStatusKey = ({ postType }) => {
   if (postType === TypeConstants.GROUP) return "group_status";
   return "status";
 };
+
+export const getKeyboardType = ({ field }) => {
+  const fieldName = field?.name?.toLowerCase();
+  if (!fieldName) return "default";
+  if (fieldName.includes("phone")) return "phone-pad";
+  if (fieldName.includes("email")) return "email-address";
+  return "default";
+};
