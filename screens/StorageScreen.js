@@ -35,7 +35,8 @@ const StorageScreen = () => {
     <View style={globalStyles.screenContainer}>
       <View style={[styles.listItemContainer, { borderTopWidth: 0 }]}>
         <Text>
-          Usage: <Text style={{ fontWeight: "bold" }}>{sizeOfCache}</Text>
+          {i18n.t("global.usage")}:{" "}
+          <Text style={{ fontWeight: "bold" }}>{sizeOfCache}</Text>
         </Text>
       </View>
       {fetching && <FetchData setFetching={setFetching} />}
@@ -45,6 +46,7 @@ const StorageScreen = () => {
           loading={fetching}
           onPress={() => setFetching(true)}
           startIcon={<DownloadIcon style={styles.buttonIcon} />}
+          containerStyle={{ width: "80%" }}
         />
       </View>
       <View style={styles.buttonDescriptionContainer}>
@@ -61,6 +63,7 @@ const StorageScreen = () => {
             setCacheObj({});
           }}
           startIcon={<DeleteIcon style={styles.buttonIcon} />}
+          containerStyle={{ width: "80%" }}
         />
       </View>
       <View style={styles.buttonDescriptionContainer}>
