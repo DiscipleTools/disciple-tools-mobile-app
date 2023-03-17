@@ -32,6 +32,7 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   buttonText: {
     color: theme.offLight,
     fontWeight: "bold",
+    marginTop: 3,
   },
   buttonAccept: {
     backgroundColor: theme.success,
