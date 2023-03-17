@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Pressable, View, useWindowDimensions } from "react-native";
 
 import { TabView, TabBar } from "react-native-tab-view";
@@ -104,6 +104,13 @@ const DetailsScreen = ({ navigation, route }) => {
       toast(err, true);
     }
   };
+
+  useEffect(() => {
+    const _isFavorite = favoriteValue === true || favoriteValue === "1";
+    if (isFavorite !== _isFavorite) {
+      setIsFavorite(_isFavorite);
+    }
+  }, [favoriteValue]);
 
   useLayoutEffect(() => {
     const kebabItems = [
@@ -250,8 +257,8 @@ const DetailsScreen = ({ navigation, route }) => {
       <OfflineBar />
       <TitleBar center title={postName} style={styles.titleBar} />
       <TabView
-        //       lazy
-        //       renderLazyPlaceholder={() => <PostSkeleton />}
+        //lazy
+        //renderLazyPlaceholder={() => <PostSkeleton />}
         keyboardDismissMode="auto"
         navigationState={{ index, routes }}
         renderScene={renderScene}
