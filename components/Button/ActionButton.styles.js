@@ -7,7 +7,6 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   },
   buttonContainer: {
     borderWidth: 1,
-    width: 200,
     marginHorizontal: "auto",
   },
   buttonText: {

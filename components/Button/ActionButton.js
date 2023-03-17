@@ -4,7 +4,15 @@ import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./ActionButton.styles";
 
-const ActionButton = ({ label, loading, onPress, startIcon, endIcon }) => {
+const ActionButton = ({
+  label,
+  loading,
+  onPress,
+  startIcon,
+  endIcon,
+  containerStyle,
+  style,
+}) => {
   const { styles } = useStyles(localStyles);
   return (
     <Button
@@ -13,8 +21,12 @@ const ActionButton = ({ label, loading, onPress, startIcon, endIcon }) => {
       title={label ?? ""}
       startIcon={startIcon ?? null}
       endIcon={endIcon ?? null}
-      containerStyle={[styles.actionButtonContainer, styles.buttonContainer]}
-      style={styles.buttonText}
+      containerStyle={[
+        styles.actionButtonContainer,
+        styles.buttonContainer,
+        containerStyle ?? {},
+      ]}
+      style={[styles.buttonText, style ?? {}]}
     />
   );
 };

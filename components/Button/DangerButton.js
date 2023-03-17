@@ -4,7 +4,15 @@ import useStyles from "hooks/use-styles";
 
 import { localStyles } from "./DangerButton.styles";
 
-const DangerButton = ({ label, loading, onPress, startIcon, endIcon }) => {
+const DangerButton = ({
+  label,
+  loading,
+  onPress,
+  startIcon,
+  endIcon,
+  containerStyle,
+  style,
+}) => {
   const { styles } = useStyles(localStyles);
   return (
     <Button
@@ -13,8 +21,12 @@ const DangerButton = ({ label, loading, onPress, startIcon, endIcon }) => {
       title={label ?? ""}
       startIcon={startIcon ?? null}
       endIcon={endIcon ?? null}
-      containerStyle={[styles.dangerButtonContainer, styles.buttonContainer]}
-      style={styles.buttonText}
+      containerStyle={[
+        styles.dangerButtonContainer,
+        styles.buttonContainer,
+        containerStyle ?? {},
+      ]}
+      style={[styles.buttonText, style ?? {}]}
     />
   );
 };
