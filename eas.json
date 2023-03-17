@@ -7,10 +7,19 @@
       "developmentClient": true,
       "distribution": "internal"
     },
-    "preview": {
+    "preview_android": {
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      },
       "distribution": "internal"
     },
-    "production": {}
+    "preview_ios": {
+      "credentialsSource": "local"
+    },
+    "production": {
+      "credentialsSource": "local"
+    }
   },
   "submit": {
     "production": {}
