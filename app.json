@@ -28,6 +28,11 @@
       "versionCode": 1110
     },
     "description": "",
-    "scheme": "tools.disciple.app"
+    "scheme": "tools.disciple.app",
+    "extra": {
+      "eas": {
+        "projectId": "f75352c0-f025-11e9-ad8e-75ff7ea50268"
+      }
+    }
   }
 }
