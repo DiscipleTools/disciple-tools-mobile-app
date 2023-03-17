@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Image, Keyboard, Linking, ScrollView, View } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector, useDispatch } from "react-redux";
 
 import { UsernameIcon, EyeIcon, KeyIcon, LinkIcon } from "components/Icon";
@@ -78,9 +78,15 @@ const LoginScreen = () => {
         ?.replace("http://", "")
         ?.replace("https://", "");
       try {
+        setState({
+          domainValidation: false,
+          userValidation: false,
+          passwordValidation: false,
+        });
         await signIn(cleanedDomain, usernameInput, passwordInput);
       } catch (error) {
-        toast(error.message, true);
+        //toast(error.message, true);
+        toast(i18n.t("global.error.tryAgain"), true);
       } finally {
         setLoading(false);
       }
