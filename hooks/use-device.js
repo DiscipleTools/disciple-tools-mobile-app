@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { Platform } from "react-native";
 
 import * as Device from "expo-device";
@@ -16,14 +15,11 @@ const useDevice = () => {
     ":" +
     (Device.osName || "");
   const isDevice = Device?.isDevice;
-  return useMemo(
-    () => ({
-      deviceUID,
-      isDevice,
-      isAndroid,
-      isIOS,
-    }),
-    [deviceUID, isDevice, isIOS, isAndroid]
-  );
+  return {
+    deviceUID,
+    isDevice,
+    isAndroid,
+    isIOS,
+  };
 };
 export default useDevice;

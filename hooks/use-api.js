@@ -17,9 +17,7 @@ const useAPI = ({ cacheKey } = {}) => {
   const updateUser = async ({ add_push_token, locale }) => {
     const url = "/dt/v1/user/update";
     let data = {};
-    //if (add_push_token) data["add_push_token"] = add_push_token;
-    // TODO
-    if (add_push_token) return;
+    if (add_push_token) data["add_push_token"] = add_push_token;
     if (locale) data["locale"] = locale;
     return request({
       request: {
@@ -28,8 +26,6 @@ const useAPI = ({ cacheKey } = {}) => {
         headers: HTTP.HEADERS.DEFAULT,
         data,
       },
-      // TODO: getCacheKeyByRequest?
-      cacheKey: url,
     });
   };
 
@@ -121,7 +117,7 @@ const useAPI = ({ cacheKey } = {}) => {
     let url = null;
     if (postType && postId) {
       url = getCommentURL({ postType, postId, commentId });
-    };
+    }
     const data = { comment };
     return request({
       request: {
