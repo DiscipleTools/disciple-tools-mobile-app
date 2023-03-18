@@ -89,7 +89,7 @@ const PendingContactsCard = ({ refreshing, onRefresh }) => {
             styles.buttonAccept,
           ]}
         >
-          <AcceptIcon style={{ color: "#fff" }} />
+          <AcceptIcon style={styles.buttonIcon} />
           <Text style={styles.buttonText}>{i18n.t("global.accept")}</Text>
         </Pressable>
         <Pressable
@@ -100,7 +100,7 @@ const PendingContactsCard = ({ refreshing, onRefresh }) => {
             styles.buttonDecline,
           ]}
         >
-          <DeclineIcon style={{ color: "#fff" }} />
+          <DeclineIcon style={styles.buttonIcon} />
           <Text style={styles.buttonText}>{i18n.t("global.decline")}</Text>
         </Pressable>
       </View>

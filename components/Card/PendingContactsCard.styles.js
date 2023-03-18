@@ -25,9 +25,14 @@ export const localStyles = ({ theme, isRTL, isIOS }) => ({
   },
   buttonContainer: {
     borderRadius: 5,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    margin: 5,
+    borderWidth: 1,
+    borderColor: theme.highlight,
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+    margin: 7,
+  },
+  buttonIcon: {
+    color: theme.offLight,
   },
   buttonText: {
     color: theme.offLight,
