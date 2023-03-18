@@ -37,9 +37,11 @@ const useFilter = () => {
   };
 
   const getDefaultFilter = () => {
+    /* NOTE: request from AH to default to "all"
     if ((isContact || isGroup) && !isNotification && !isCommentsActivity) {
       return getDefaultFavoritesFilter({ i18n, type: postType });
     }
+    */
     return {
       ID: "all",
       name: i18n.t("global.all"),
