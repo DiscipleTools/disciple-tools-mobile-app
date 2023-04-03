@@ -379,6 +379,10 @@ export const CacheConstants = Object.freeze({
   INTERVAL: 1000 * 30, // 30 seconds
 });
 
+export const ErrorConstants = Object.freeze({
+  LOGIN_CREDENTIALS: "Invalid username or password",
+});
+
 export const APP_VERSION = Constants.manifest.version;
 
 export default {

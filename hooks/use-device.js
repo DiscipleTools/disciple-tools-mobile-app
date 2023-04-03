@@ -7,7 +7,7 @@ const useDevice = () => {
   const isAndroid = Platform.OS === "android";
   // Construct a (somewhat) unique identifier for this particular device
   const deviceUID =
-    (Device.manufacturer || "") +
+    (Device.brand || "") +
     ":" +
     (Device.modelName || "") +
     ":" +

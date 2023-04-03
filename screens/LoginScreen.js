@@ -19,6 +19,8 @@ import useToast from "hooks/use-toast";
 
 import { setFormField } from "store/actions/auth.actions";
 
+import { ErrorConstants } from "constants";
+
 import { localStyles } from "./LoginScreen.styles";
 
 const Header = React.memo(() => {
@@ -85,8 +87,11 @@ const LoginScreen = () => {
         });
         await signIn(cleanedDomain, usernameInput, passwordInput);
       } catch (error) {
-        //toast(error.message, true);
-        toast(i18n.t("global.error.tryAgain"), true);
+        if (error?.message?.includes(ErrorConstants.LOGIN_CREDENTIALS)) {
+          toast(i18n.t("global.error.loginCredentials"), true);
+        } else {
+          toast(i18n.t("global.error.tryAgain"), true);
+        }
       } finally {
         setLoading(false);
       }

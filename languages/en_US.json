@@ -26,6 +26,7 @@
     "error": {
       "forgotLogin": "Please enter URL to start to retrieve your login/password",
       "isRequired": "%{item} is required",
+      "loginCredentials": "Invalid username or password",
       "mobileAppPluginRequired": "The Mobile App Plugin is required and does not seem to be activated on your D.T",
       "pinExisting": "Unable to retrieve existing PIN. Please reinstall app, and if the problem persists then please contact your D.T Administrator for assistance",
       "pinRepeating": "Repeating (i.e., 444444) or Sequential (i.e., 234567) values are not permitted",

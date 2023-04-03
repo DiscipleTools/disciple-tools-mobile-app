@@ -24,7 +24,7 @@ const useAPI = ({ cacheKey } = {}) => {
         url,
         method: HTTP.METHODS.POST,
         headers: HTTP.HEADERS.DEFAULT,
-        data,
+        data: JSON.stringify(data),
       },
     });
   };

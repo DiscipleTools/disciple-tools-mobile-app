@@ -5,10 +5,13 @@
     "slug": "discipletoolsapp",
     "privacy": "public",
     "platforms": ["ios", "android"],
-    "version": "1.11.1",
+    "version": "1.11.6",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "icon": "./assets/icon.png",
+    "notification": {
+      "icon": "./assets/icon-status-bar.png"
+    },
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "cover",
@@ -26,7 +29,7 @@
       "package": "tools.disciple.app",
       "googleServicesFile": "./google-services.json",
       "softwareKeyboardLayoutMode": "pan",
-      "versionCode": 1111
+      "versionCode": 1116
     },
     "description": "",
     "scheme": "tools.disciple.app",

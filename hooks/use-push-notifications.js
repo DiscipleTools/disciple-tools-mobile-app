@@ -1,9 +1,11 @@
 import { useEffect, useRef } from "react";
+import { Alert } from "react-native";
 
 import * as Notifications from "expo-notifications";
 
 import useAPI from "./use-api";
 import useDevice from "hooks/use-device";
+import useNetwork from "hooks/use-network";
 import useType from "hooks/use-type";
 import { useNavigation, TabActions } from "@react-navigation/native";
 
@@ -22,6 +24,7 @@ Notifications.setNotificationHandler({
 const usePushNotifications = () => {
   const navigation = useNavigation();
   const { deviceUID, isDevice, isAndroid, isIOS } = useDevice();
+  const { isConnected } = useNetwork();
   const { getTabScreenFromType } = useType();
   const { updateUser } = useAPI();
   const notificationListener = useRef();
@@ -48,14 +51,14 @@ const usePushNotifications = () => {
         return;
       }
       token = (await Notifications.getExpoPushTokenAsync()).data;
-      await updateUser({
+      updateUser({
         add_push_token: {
           token,
           device_id: deviceUID,
         },
       });
     } else {
-      alert("Must use physical device for Push Notifications");
+      Alert.alert("Must use physical device for Push Notifications");
     }
     if (isAndroid) {
       Notifications.setNotificationChannelAsync("default", {
@@ -95,12 +98,17 @@ const usePushNotifications = () => {
   }, [lastNotificationResponse]);
 
   useEffect(() => {
-    registerForPushNotificationsAsync();
+    if (isConnected) {
+      registerForPushNotificationsAsync();
+    }
+    return;
+  }, [isConnected]);
 
+  /*
+  useEffect(() => {
     // This listener is fired whenever a notification is received while the app is foregrounded
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
-        // useNotifications and then force re-render when receiving a notification?
         //setNotification(notification);
       });
 
@@ -110,5 +118,6 @@ const usePushNotifications = () => {
       );
     };
   }, []);
+  */
 };
 export default usePushNotifications;

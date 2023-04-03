@@ -23,7 +23,7 @@ import axios from "services/axios";
 
 import jwt_decode from "jwt-decode";
 
-import { AppConstants, AuthConstants } from "constants";
+import { AppConstants, AuthConstants, ErrorConstants } from "constants";
 
 const AuthContext = createContext(null);
 
@@ -109,22 +109,22 @@ const useCustomAuth = () => {
           } catch (error) {
             console.error(error);
           }
-        };
+        }
         // rehydrate baseUrl
         if (!baseUrl) {
           const rehydratedBaseUrl = await getSecureItem(AuthConstants.BASE_URL);
           setBaseUrl(rehydratedBaseUrl);
-        };
+        }
         // rehydrate access token
         if (!accessToken) {
           const rehydratedAccessToken = await getSecureItem(
             AuthConstants.ACCESS_TOKEN
           );
           setAccessToken(rehydratedAccessToken);
-        };
+        }
       })();
       return;
-    };
+    }
     (async () => {
       // if auto-login enabled, then proceeed, otherwise validate login cnonce
       if (isAutoLogin) {
@@ -132,7 +132,7 @@ const useCustomAuth = () => {
       } else {
         const validatedLogin = await validateCNonce();
         setAuthenticated(validatedLogin);
-      };
+      }
     })();
     return;
   }, [accessToken, baseUrl, user?.id]);
@@ -199,7 +199,7 @@ const useCustomAuth = () => {
           },
           (error) => error
         );
-      };
+      }
     })();
     return () => {
       if (requestInterceptor) {
@@ -280,7 +280,17 @@ const useCustomAuth = () => {
         setAuthenticated(true);
         return;
       }
+      // NOTE: D.T returns a 200 response with HTML body on invalid login
+      if (!res?.data?.token) {
+        throw new Error(ErrorConstants.LOGIN_CREDENTIALS);
+      }
     } catch (error) {
+      /*
+       * NOTE: this may be any of the following errors:
+       * - invalid D.T instance
+       * - missing D.T mobile app plugin
+       * - user locked out
+       */
       throw new Error(error);
     }
   }, []);
