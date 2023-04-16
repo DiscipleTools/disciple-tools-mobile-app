@@ -29,7 +29,7 @@ const KeySelectFieldEdit = ({
   onChange,
   mutate,
 }) => {
-  const { styles } = useStyles(localStyles);
+  const { globalStyles, styles } = useStyles(localStyles);
   //const postId = useId();
   const { setCacheByKey } = useCache();
   const { updatePost } = useAPI();
@@ -56,6 +56,8 @@ const KeySelectFieldEdit = ({
     }
     return;
   };
+
+  const backgroundColor = fieldOptions?.[value?.key]?.color ?? null;
 
   const isStatusField =
     fieldKey === FieldNames.OVERALL_STATUS ||
@@ -86,6 +88,7 @@ const KeySelectFieldEdit = ({
 
   const renderItem = (item, idx) => (
     <View key={idx} style={styles.container}>
+      <View style={styles.statusBorder({ backgroundColor })} />
       <Text>{item}</Text>
     </View>
   );
@@ -95,8 +98,6 @@ const KeySelectFieldEdit = ({
   const modalName = `${fieldKey}_modal`;
   const defaultIndex = getDefaultIndex();
 
-  const backgroundColor = fieldOptions?.[value?.key]?.color ?? null;
-
   // TODO: postItem.description (for Reason)
   return (
     <>
@@ -104,7 +105,7 @@ const KeySelectFieldEdit = ({
         onOpen={() => modalRef.current?.present()}
         items={[selectedLabel]}
         renderItem={renderItem}
-        style={{ backgroundColor }}
+        ///style={{ backgroundColor }}
       />
       <ModalSheet
         ref={modalRef}
