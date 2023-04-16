@@ -237,7 +237,7 @@ const DetailsScreen = ({ navigation, route }) => {
       fields: fieldEntries,
       tileKey: route.key,
     });
-    const idx = routes.findIndex((_route) => _route.key === route);
+    const idx = routes.findIndex((_route) => _route?.key === route?.key);
     return (
       <Tile
         idx={idx}
