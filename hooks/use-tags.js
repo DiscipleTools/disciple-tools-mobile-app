@@ -1,14 +1,13 @@
-import useRequest from "hooks/use-request";
-import { getTagsURL } from "helpers/urls";
+import useSettings from "hooks/use-settings";
+import { SettingsURL } from "constants/urls";
 
 const useTags = ({ exclude, search, postType }) => {
-  const url = getTagsURL({ postType });
-  const { data, error, isValidating, mutate } = useRequest({
-    request: { url, method: "GET" },
-  });
-  if (!data?.length > 0 || isValidating || error) {
+  const { settings, error, isLoading, isValidating } = useSettings();
+  const mutate = () => null;
+  const data = settings?.post_types?.[postType]?.fields?.tags?.default;
+  if (!data || isValidating || error) {
     return {
-      cacheKey: url,
+      cacheKey: SettingsURL,
       data: isValidating ? null : [],
       error,
       isLoading: !data && !error,
@@ -29,7 +28,7 @@ const useTags = ({ exclude, search, postType }) => {
   }
   // sort?
   return {
-    cacheKey: url,
+    cacheKey: SettingsURL,
     data: tags,
     error,
     isLoading: !data && !error,

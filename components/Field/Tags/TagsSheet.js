@@ -6,6 +6,7 @@ import FilterList from "components/FilterList";
 import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 
 import useFilter from "hooks/use-filter";
+import useI18N from "hooks/use-i18n";
 import useStyles from "hooks/use-styles";
 import useTags from "hooks/use-tags";
 import useType from "hooks/use-type";
@@ -14,6 +15,7 @@ import { localStyles } from "./TagsSheet.styles";
 
 const TagsSheet = ({ values, onChange, modalName }) => {
   const { styles, globalStyles } = useStyles(localStyles);
+  const { i18n } = useI18N();
 
   const { dismiss } = useBottomSheetModal();
 
@@ -54,10 +56,12 @@ const TagsSheet = ({ values, onChange, modalName }) => {
     );
   };
 
+  const placeholderItems = i18n.t("global.items");
   return (
     <FilterList
       items={items}
       renderItem={renderItem}
+      placeholder={i18n.t("global.placeholder", { items: placeholderItems })}
       search={search}
       onSearch={onSearch}
     />
