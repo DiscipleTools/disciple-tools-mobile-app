@@ -151,13 +151,11 @@ export const filterPosts = ({ posts, query }) => {
       }
 
       // handler for "me" queries (like "assigned_to" query, but list of values)
-      // TODO: API BUG (need "contact_id" property since "subassigned".ID refers to contact ID, not user ID)
-      //postKey?.find((_item) => _item?.ID === userData?.ID?.toString())
       if (
         meList.includes(key) &&
         queryKey.includes("me") &&
         postKey?.find(
-          (_item) => _item?.post_title === userData?.profile?.username
+          (_item) => _item?.ID === userData?.corresponds_to_contact?.toString()
         )
       ) {
         return true;
