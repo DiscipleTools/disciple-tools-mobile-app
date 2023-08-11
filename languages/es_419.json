@@ -31,7 +31,8 @@
             "pinRepeating": "No se permiten valores repetidos (es decir, 444444) o secuenciales (es decir, 234567)",
             "requestQueued": "SIN CONEXIÓN, solicitud en fila...",
             "text": "Error",
-            "tryAgain": "Ha ocurrido un error. Por favor intente otra vez"
+            "tryAgain": "Ha ocurrido un error. Por favor intente otra vez",
+            "loginCredentials": "Nombre de usuario o contraseña inválida"
         },
         "favoriteContacts": "Contactos Favoritos",
         "favoriteGroups": "Grupos Favoritos",
