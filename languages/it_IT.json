@@ -27,7 +27,8 @@
             "pinRepeating": "Non sono consentiti valori ripetuti (ad es. 444444) o sequenziali (ad es. 234567)",
             "requestQueued": "OFFLINE, richiesta in coda...",
             "text": "testo",
-            "tryAgain": "Si è verificato un errore. Per favore, riprova"
+            "tryAgain": "Si è verificato un errore. Per favore, riprova",
+            "loginCredentials": "Nome Utente o Password Invalido"
         },
         "filter": "Filtro",
         "filterBy": "Filtra per",
@@ -85,6 +86,16 @@
         "favoriteContacts": "Contatti Preferiti",
         "favoriteGroups": "Gruppi Preferiti",
         "otp": "OTP",
-        "storage": "Spazio di Memoria"
+        "storage": "Spazio di Memoria",
+        "usage": "Utilizzo",
+        "clearStorage": "Elimina Archivi",
+        "clearStorageNote": "Attenzione! Se sei offline ed elimini gli archivi, non avrai accesso ai tuoi dati fino a quando sarai di nuovo online e sarà tutto ripristinato.",
+        "launchCard": {
+            "title": "Caricando i dati per l'uso offline",
+            "body": "Recuperando i Preferiti e i record modificati di recente (per l'uso offline)"
+        },
+        "pending": "Aspettando di essere accettato",
+        "downloadData": "Scarica I Dati",
+        "downloadDataNote": "Quest'azione causerà l'app di recuperare e archiviare tutti i dati possibili (inclusi ogni contatto e gruppo, e i loro commenti, luoghi, etnie, ecc...) In base all'utilizzo del tuo team, potrebbe essere diversi MB di dati e potrebbe causare un rallentamento dell'app. (Come impostazione predefinita, scarichiamo soltanto i favorites e i loro dati associati. Tutti gli altri dati consultati mentre sei online sarà archiviato e disponibile per l'uso offline se non viene cancellato)."
     }
 }
